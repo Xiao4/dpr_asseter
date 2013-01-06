@@ -1,0 +1,42 @@
+{
+	"keepInMem"	:true,
+	"listen"	:"14445",
+	"filePath"	:"/home/liuwenbo/domob/assets3.0",
+	"tmpPath"	:"/home/liuwenbo/tmp/combo",
+	"comboPathName"	:"/combo/",
+	"compile"	:false,
+	"compiler"	: "YUI",
+	"log"		:true,
+	"logFile"	:"/home/liuwenbo/logs/asseter_access.log",
+	"MIME" : {
+		"jpg":	"image/jpeg",
+		"gif":	"image/gif",
+		"png":	"image/png",
+		"ico":	"image/x-icon",
+		"icon":	"image/x-icon",
+		"css":	"text/css",
+		"js":	"text/javascript",
+		"html":	"text/html",
+		"htm":	"text/html",
+		"txt":	"text/plain"
+	},
+	"clinetCacheExt" : {
+		"jpg":	true,
+		"gif":	true,
+		"png":	true,
+		"ico":	true,
+		"icon":	true,
+		"css":	true,
+		"js":	true,
+		"html":	true,
+		"htm":	true,
+		"txt":	true
+	},
+	"clinetZipExt" : {
+		"css":	true,
+		"js":	true,
+		"html":	true,
+		"htm":	true,
+		"txt":	true
+	}
+}
