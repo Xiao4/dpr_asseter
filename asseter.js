@@ -223,5 +223,5 @@ function app(request, response) {
 	}
 }
 http.createServer(app).listen(config.listen, function(){
-	console.log("Asset server listening on " + config.listen);
+	console.log("Asset server(pid:" + process.pid + ") listening on " + config.listen);
 });

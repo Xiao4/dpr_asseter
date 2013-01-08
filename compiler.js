@@ -88,7 +88,7 @@ function doCompile (env) {
 				cat.stdout.on('data', function(data){
 					fs.appendFileSync(env.fullPath, data);
 				});
-				cat.on('exit', function(){
+				cat.on('exit', function(code){
 					process.send({"code":code, name: 'compile_complete', data: env.hashedPath});
 				});
 			}
