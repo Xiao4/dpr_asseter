@@ -1,5 +1,6 @@
 var fs = require('fs'),
 	path = require('path'),
+	UglifyJS = require("uglify-js"),
 	config = require('./config.json')
 	;
 
@@ -40,7 +41,7 @@ function doCompile (env) {
 				compiler.on('exit', function (code) {
 					process.send({"code":code, name: 'compile_complete', data: env.hashedPath});
 				});
-			}else{ //use YUI in default for faster compress
+			}else if(config.compiler == "YUI"){ //use YUI in default for faster compress
 				args = fullPathList.join(',');
 				var cat = spawn('cat', args.split(','));
 
@@ -59,6 +60,12 @@ function doCompile (env) {
 						process.send({"code":code, name: 'compile_complete', data: env.hashedPath});
 						fs.unlink(env.fullPath + '_uncomp');
 					});
+				});
+			}else{
+				var result = UglifyJS.minify(fullPathList);
+				fs.writeFile(env.fullPath, result.code, function(err){
+					if (err) throw err;
+					process.send({"code":0, name: 'compile_complete', data: env.hashedPath});
 				});
 			}
 		}else{

@@ -1,12 +1,24 @@
 {
-  "name": "asseter",
-  "version": "0.0.0",
-  "description": "asset server",
-  "main": "asseter.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": "",
-  "author": "liuwenbo@domob.cn",
-  "license": ""
+	"name": "asseter",
+	"version": "0.0.0",
+	"description": "asset server",
+	"homepage": "http://asseter.codeplex.com/",
+	"author": "Xiao4",
+	"main": "cluster.js",
+	"scripts": {
+		"test": "node cluster.js"
+	},
+	"repository": {
+		"type":"git",
+		"url":"https://git01.codeplex.com/asseter"
+	},
+	"license": [
+		{
+			"type": "Apache-2.0",
+			"url": "http://www.apache.org/licenses/LICENSE-2.0"
+		}
+	],
+  "devDependencies": {
+    "uglify-js": "2.2.5"
+  }
 }

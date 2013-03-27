@@ -30,6 +30,10 @@ var Cache = {},
 	REG_EXT = /\.(\w+)([\?\#].*)?$/
 	;
 var Asseter = {
+	/**
+	 * 处理ComboUrl 管道入口
+	 * @param  {Env} env 环境对象
+	 */
 	handleCombo : function(env){
 		env.hashedPath = __md5Hash(env.pathStr);
 		env.fullPath = config.tmpPath + '/' + env.hashedPath;
@@ -54,6 +58,10 @@ var Asseter = {
 			Asseter.clinetCacheControl(env);
 		});
 	},
+	/**
+	 * 处理一般静态文件 管道入口
+	 * @param  {Env} env 环境对象
+	 */
 	handleStatic : function(env){
 		env.fullPath = env.fullPath.replace(/[\?#].+$/, '');
 		fs.stat(env.fullPath, function(err, stats){
@@ -62,6 +70,10 @@ var Asseter = {
 			Asseter.clinetCacheControl(env);
 		});
 	},
+	/**
+	 * 检测客户端缓存
+	 * @param  {Env} env 环境对象
+	 */
 	clinetCacheControl : function(env){
 		var eTag = env.stats.ino.toString(16)+ "-" + env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
 		
@@ -75,6 +87,10 @@ var Asseter = {
 		env.eTag = eTag;
 		Asseter.readFile(env);
 	},
+	/**
+	 * 读取文件
+	 * @param  {Env} env 环境对象
+	 */
 	readFile: function(env){
 		!env.hashedPath && (env.hashedPath = __md5Hash(env.pathStr));
 		if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].eTag == env.eTag){
@@ -98,6 +114,10 @@ var Asseter = {
 			Asseter.zipData(env);
 		});
 	},
+	/**
+	 * 压缩 file Buff
+	 * @param  {Env} env 环境对象
+	 */
 	zipData: function(env){
 		var acceptEncoding = env.request.headers['accept-encoding'];
 		if(config.clinetZipExt[env.ext] && acceptEncoding){
@@ -141,6 +161,11 @@ var Asseter = {
 			Asseter.responseEnd(env, env.data);
 		}		
 	},
+	/**
+	 * 完成响应并关闭连接
+	 * @param  {Env} env 环境对象
+	 * @param  {Buff} buf file Buff
+	 */
 	responseEnd : function(env, buf){
 		if(env.statsCode)env.response.writeHeader(env.statsCode);
 		env.response.end(buf);
@@ -149,10 +174,9 @@ var Asseter = {
 		config.log && Asseter.log(env);
 	},
 	/**
-	 * [返回错误并关闭链接]
-	 * @param  {Response} response [Response Object]
-	 * @param  {Number} statsCode  [Error statsCode]
-	 * @param  {String} err [Error Msg]
+	 * 返回错误并关闭连接
+	 * @param  {Env} env       环境对象
+	 * @param  {Mixed} statsCode 错误代码，或报错信息
 	 */
 	error : function(env, statsCode){
 		env.response.setHeader('Content-Type', 'text/html');
@@ -179,6 +203,10 @@ var Asseter = {
 		env.statsCode = statsCode;
 		Asseter.responseEnd(env, txt);
 	},
+	/**
+	 * 发送记录log请求
+	 * @param  {Env} env 环境对象
+	 */
 	log : function(env){
 		process.send({name:'access_complete', data:{
 			remoteAddress: env.request.connection.remoteAddress,
