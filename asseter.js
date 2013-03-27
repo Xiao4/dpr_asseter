@@ -27,7 +27,7 @@ process.on('message',function(m){
 });
 
 var Cache = {},
-	REG_EXT = /\.(\w+)$/
+	REG_EXT = /\.(\w+)([\?\#].*)?$/
 	;
 var Asseter = {
 	handleCombo : function(env){
@@ -63,25 +63,21 @@ var Asseter = {
 		});
 	},
 	clinetCacheControl : function(env){
-		var lastModified = env.stats.mtime.toUTCString();
-		if(env.request.headers['if-modified-since'] && lastModified == env.request.headers['if-modified-since']){
+		var eTag = env.stats.ino.toString(16)+ "-" + env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
+		
+		if(env.request.headers['if-none-match'] && eTag == env.request.headers['if-none-match']){
 			env.statsCode = 304;
 			Asseter.responseEnd(env);
 			return;
 		}
-		if(config.clinetCacheExt[env.ext]){
-			var expires = new Date(9999999999999);
-			env.response.setHeader('Expires', expires.toUTCString());
-		}else{
-			env.response.setHeader('Cache-Control', 'max-age=5');
-		}
-		env.response.setHeader('Last-Modified', lastModified);
-		env.lastModified = lastModified;
+		env.response.setHeader('ETag', eTag);
+
+		env.eTag = eTag;
 		Asseter.readFile(env);
 	},
 	readFile: function(env){
 		!env.hashedPath && (env.hashedPath = __md5Hash(env.pathStr));
-		if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].lastModified == env.lastModified){
+		if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].eTag == env.eTag){
 			env.data = Cache[env.hashedPath].data;
 			env.response.setHeader('Content-Type', env.contentType);
 			env.clinetCacheStat = 'file';
@@ -92,7 +88,7 @@ var Asseter = {
 		fs.readFile(env.fullPath,function(err,data){
 			if(err){Asseter.error(env,500);return;}
 			Cache[env.hashedPath] = {
-				lastModified: env.lastModified,
+				eTag: env.eTag,
 				gziped: '',
 				deflated: '',
 				data: data
@@ -148,7 +144,7 @@ var Asseter = {
 	responseEnd : function(env, buf){
 		if(env.statsCode)env.response.writeHeader(env.statsCode);
 		env.response.end(buf);
-		// env.contentLength = buf ? buf.length||0 : 0;
+		env.contentLength = buf ? buf.length||0 : 0;
 		env.finishTime = (new Date()).valueOf();
 		config.log && Asseter.log(env);
 	},
@@ -178,7 +174,7 @@ var Asseter = {
 				txt = '<h3>500: Internal Server Error</h3>';
 				break;
 			default:
-				txt = "<h3>Ooops, he is dead.</h3>"
+				txt = "<h3>Ooops, he is dead.</h3><p>"+statsCode+"</p>"
 		}
 		env.statsCode = statsCode;
 		Asseter.responseEnd(env, txt);
@@ -209,11 +205,10 @@ function app(request, response) {
 		};
 	env.pathStr = path.normalize(env.urlObj.path);
 	env.startTime = start.valueOf();
-
 	var tmpExt = REG_EXT.exec(env.pathStr);
 	env.ext = tmpExt ? tmpExt[1] : 'html';
 	env.contentType = config.MIME[env.ext];
-	!env.contentType && Asseter.error(env, 403);
+	if(!env.contentType){Asseter.error(env, 403);return;}
 
 	if(env.urlObj.pathname == config.comboPathName){
 		Asseter.handleCombo(env);
