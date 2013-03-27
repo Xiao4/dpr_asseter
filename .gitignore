@@ -1,1 +1,5 @@
 config.json
+*swp
+*.swp
+.gitCOMMIT_DEITMSG
+/node_modules/

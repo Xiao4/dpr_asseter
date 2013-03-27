@@ -6,7 +6,7 @@
 	"author": "Xiao4",
 	"main": "cluster.js",
 	"scripts": {
-		"test": "node cluster.js"
+		"start":"node ./cluster.js"
 	},
 	"repository": {
 		"type":"git",

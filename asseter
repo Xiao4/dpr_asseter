@@ -1,0 +1,27 @@
+#!/bin/bash
+# chkconfig:345 55 01
+# description:asster
+. /etc/init.d/functions
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DIR='/root/asseter'
+NODE_PATH='/root/asseter/node_modules'
+
+start_app() {
+    forever start "$DIR/cluster.js"
+}
+stop_app() {
+    forever stop "$DIR/cluster.js"
+}
+case $1 in
+    start)
+        start_app ;;
+    stop)
+        stop_app ;;
+    restart)
+        stop_app
+        start_app
+        ;;
+    *)
+    echo "usage: {start|stop}" ;;
+esac
+exit 0

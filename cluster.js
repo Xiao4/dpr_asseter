@@ -44,6 +44,6 @@ if (cluster.isMaster) {
 	});
 
 } else {
-  //load up your application as a worker
-  require('./asseter.js');
+	//load up your application as a worker
+	require('./asseter.js');
 }
