@@ -27,7 +27,7 @@ process.on('message',function(m){
 });
 
 var Cache = {},
-	REG_EXT = /\.(\w+)/
+	REG_EXT = /\.(\w+)$/
 	;
 var Asseter = {
 	handleCombo : function(env){
@@ -148,7 +148,7 @@ var Asseter = {
 	responseEnd : function(env, buf){
 		if(env.statsCode)env.response.writeHeader(env.statsCode);
 		env.response.end(buf);
-		env.contentLength = buf ? buf.length||0 : 0;
+		// env.contentLength = buf ? buf.length||0 : 0;
 		env.finishTime = (new Date()).valueOf();
 		config.log && Asseter.log(env);
 	},
