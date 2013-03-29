@@ -24,6 +24,7 @@ function doCompile (env) {
 			revision = tmpRevision? tmpRevision[1]: 0,
 			fullPathList = []
 			;
+		//check path & file stat
 		pathList.forEach(function(value){
 			if(!REG_PARENT.test(value)){
 				fullPathList.push(env.filePath + '/' + value);
@@ -31,14 +32,20 @@ function doCompile (env) {
 		});
 
 		if(config.compile && env.ext == 'js'){
-			var result = UglifyJS.minify(fullPathList);
+			var result;
+			try{
+				result = UglifyJS.minify(fullPathList);
+			}catch (e){
+				process.send({"code":0, name: 'compile_complete', data: env.hashedPath});
+				return;
+			}
 			fs.writeFile(env.fullPath, result.code, function(err){
 				if (err) throw err;
 				process.send({"code":0, name: 'compile_complete', data: env.hashedPath});
 			});
 		}else{
-			args = fullPathList.join(',');
-			var cat = spawn('cat', args.split(','));
+			// args = fullPathList.join(',');
+			var cat = spawn('cat', fullPathList);
 
 			if(revision){
 				//sed -r s/\(\\w\\.\(png\|jpg\|gif\)\)\(\\?v=\\w+\)\?/\\1?v=2/gim
@@ -49,7 +56,7 @@ function doCompile (env) {
 						});
 						sed.on('exit', function(code){
 							process.send({"code":code, name: 'compile_complete', data: env.hashedPath});
-							fs.unlink(env.fullPath + '_uncomp');
+							// fs.unlink(env.fullPath + '_uncomp');
 						});
 					});
 				});
