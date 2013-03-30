@@ -27,7 +27,8 @@ process.on('message',function(m){
 });
 
 var Cache = {},
-	REG_EXT = /\.(\w+)([\?\#].*)?$/
+	REG_EXT = /\.(\w+)([\?\#].*)?$/,
+	REG_VERSION = new RegExp(config.strRegVersion)
 	;
 var Asseter = {
 	/**
@@ -35,8 +36,12 @@ var Asseter = {
 	 * @param  {Env} env 环境对象
 	 */
 	handleCombo : function(env){
+		var tmpVersion = REG_VERSION.exec(env.pathStr),
+			version = tmpVersion? tmpVersion[1]:0,
+			versionDir = config.tmpPath + '/' + version
+			;
 		env.hashedPath = __md5Hash(env.pathStr);
-		env.fullPath = config.tmpPath + '/' + env.hashedPath;
+		env.fullPath = versionDir + '/' + env.hashedPath;
 
 		fs.stat(env.fullPath, function(err, stats){
 			if(err){ //no Combod file found
