@@ -1,34 +1,36 @@
 var cluster = require('cluster');
 
 if (cluster.isMaster) {
-	var child_process = require('child_process');
-	var compiler = child_process.fork(__dirname + '/compiler.js');
-	var logger = child_process.fork(__dirname + '/logger.js');
+	var child_process = require('child_process'),
+		logger = child_process.fork(__dirname + '/logger.js'),
+		waitingList = {};
 
-	var waitingList = {};
 	function messageHandler(workerId, m) {
 		if(m.name == "compile"){
+			// 压缩请求
+			// 已经存在压缩请求时，记录在相应压缩请求等待队列中
 			if(waitingList[m.data.hashedPath]){
 				waitingList[m.data.hashedPath].push(workerId);
 				return;
 			}
+
+			// 批准压缩请求
 			waitingList[m.data.hashedPath] = [workerId];
-			compiler.send(m);
-		}else if(m.name == "access_complete"){
-			m.data.workerId = workerId;
-			logger.send(m);
-		}
-	}
-	compiler.on('message',function(m){
-		if(m.name == "compile_complete"){
+			cluster.workers[workerId].send(m);
+		}else if(m.name == "compile_complete"){
+			// 压缩完成轮询等待队列，发送压缩完成通知
 			var workerList = waitingList[m.data];
 			if(!workerList)return;
 			for(var i=0; i < workerList.length; i++){
 				cluster.workers[workerList[i]].send(m);
 			}
 			delete waitingList[m.data];
+		}else if(m.name == "access_complete"){
+			// 日志
+			m.data.workerId = workerId;
+			logger.send(m);
 		}
-	});
+	}
 
 	//start up workers for each cpu
 	require('os').cpus().forEach(function() {
@@ -44,6 +46,6 @@ if (cluster.isMaster) {
 	});
 
 } else {
-	//load up your application as a worker
+	//load up asseter as a worker
 	require('./asseter.js');
 }

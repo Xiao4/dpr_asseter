@@ -8,7 +8,9 @@ var config = require('./config.json'),
 	path = require('path'),
 	fs = require('fs'),
 	zlib = require('zlib')
-	;
+	child_process = require('child_process'),
+	compiler = child_process.fork(__dirname + '/compiler.js');
+
 function __md5Hash(str) {
 	var hash = require('crypto').createHash('md5');
 	return hash.update(str).digest('hex');
@@ -23,6 +25,14 @@ process.on('message',function(m){
 			Asseter.handleStatic(envList[i]);
 		}
 		delete waitingEnvList[m.data];
+	}else if(m.name == "compile"){
+		compiler.send(m);
+	}
+});
+
+compiler.on('message',function(m){
+	if(m.name == "compile_complete"){
+		process.send(m);
 	}
 });
 
@@ -88,7 +98,7 @@ var Asseter = {
 			return;
 		}
 		env.response.setHeader('ETag', eTag);
-
+ 	    env.response.setHeader('Cache-Control', 'public, max-age=31536000');
 		env.eTag = eTag;
 		Asseter.readFile(env);
 	},

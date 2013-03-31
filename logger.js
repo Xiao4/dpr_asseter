@@ -39,6 +39,7 @@ function doLog(env) {
 			+ ' "' + (env.headers['referer']||'-') +'"'
 			+ ' "' + env.headers['user-agent'] + '"'
 			+ ' "' + (env.clinetCacheStat||'null') + '"'
+			+ ' by process ' + env.workerId
 			+ "\n"
 			;
 	__lines.push(newline);
