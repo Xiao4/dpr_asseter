@@ -4,6 +4,7 @@
 	"filePath"	:"/root/resources",
 	"tmpPath"	:"/root/tmp/combo",
 	"comboPathName"	:"/combo/",
+	"strRegVersion": "\\?(\\d+),",
 	"compile"	:true,
 	"log"		:true,
 	"logFile"	:"/root/logs/asseter_access.log",

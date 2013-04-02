@@ -55,10 +55,20 @@ var Asseter = {
 
 		env.fullPath = versionDir + '/' + env.hashedPath;
 
+		if(Asseter.__comboStatList[env.hashedPath]){
+			Asseter.__comboStatList[env.hashedPath].push(env);
+			return;
+		}
+		Asseter.__comboStatList[env.hashedPath] = [env];
 		fs.stat(env.fullPath, function(err, stats){
+			var envList = Asseter.__comboStatList[env.hashedPath];
+			if(!envList)return;
+
 			if(err){ //no Combod file found
 				if(waitingEnvList[env.hashedPath]){
-					waitingEnvList[env.hashedPath].push(env);
+					for(var i=0; i < envList.length; i++){
+						waitingEnvList[env.hashedPath].push(envList[i]);
+					}
 					return;
 				}
 				waitingEnvList[env.hashedPath] = [env];
@@ -71,8 +81,11 @@ var Asseter = {
 				}});
 				return;
 			}
-			env.stats = stats;
-			Asseter.clinetCacheControl(env);
+			for(var i=0; i < envList.length; i++){
+				envList[i].stats = stats;
+				Asseter.clinetCacheControl(envList[i]);
+			}
+			delete Asseter.__comboStatList[env.hashedPath];
 		});
 	},
 	/**
@@ -91,10 +104,12 @@ var Asseter = {
 		fs.stat(env.fullPath, function(err, stats){
 			var envList = Asseter.__staticStatList[env.hashedPath];
 			if(!envList)return;
-			for(var i=0; i < envList.length; i++){
-				if(err){
+			if(err){
+				for(var i=0; i < envList.length; i++){
 					Asseter.error(envList[i],404);
-				}else{
+				}
+			}else{
+				for(var i=0; i < envList.length; i++){
 					envList[i].stats = stats;
 					Asseter.clinetCacheControl(envList[i]);
 				}
