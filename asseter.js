@@ -7,9 +7,10 @@ var config = require('./config.json'),
 	url = require('url'),
 	path = require('path'),
 	fs = require('fs'),
-	zlib = require('zlib')
+	zlib = require('zlib'),
+	Cache = require('./lib/cache'),
 	child_process = require('child_process'),
-	compiler = child_process.fork(__dirname + '/compiler.js');
+	compiler = child_process.fork(__dirname + '/lib/compiler.js');
 
 function __md5Hash(str) {
 	var hash = require('crypto').createHash('md5');
@@ -29,6 +30,7 @@ process.on('message',function(m){
 		compiler.send(m);
 	}
 });
+process.setMaxListeners(0);
 
 compiler.on('message',function(m){
 	if(m.name == "compile_complete"){
@@ -36,7 +38,7 @@ compiler.on('message',function(m){
 	}
 });
 
-var Cache = {},
+var cache = new Cache(config.cacheLimit),
 	REG_EXT = /\.(\w+)([\?\#].*)?$/,
 	REG_VERSION = new RegExp(config.strRegVersion)
 	;
@@ -45,7 +47,7 @@ var Asseter = {
 	 * 处理ComboUrl 管道入口
 	 * @param  {Env} env 环境对象
 	 */
-	__comboStatList:[],
+	__comboStatList:{},
 	handleCombo : function(env){
 		if(env.response.finished){Asseter.error(env,0);return;}
 		var tmpVersion = REG_VERSION.exec(env.pathStr),
@@ -134,33 +136,54 @@ var Asseter = {
  	    env.httpHeader['Cache-Control'] = 'public, max-age=31536000';
 		env.eTag = eTag;
 		Asseter.readFile(env);
+		return;
 	},
 	/**
 	 * 读取文件
 	 * @param  {Env} env 环境对象
 	 */
+	__readFileList:{},
 	readFile: function(env){
 		if(env.response.finished){Asseter.error(env,0);return;}
-		if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].eTag == env.eTag){
-			env.data = Cache[env.hashedPath].data;
+		var hit = cache.get(env.hashedPath) ? cache.get(env.hashedPath)[0] : false;
+		if( hit && hit.eTag == env.eTag){
+			env.data = hit.data;
 			env.httpHeader['Content-Type'] = env.contentType;
 			env.clinetCacheStat = 'file';
 			Asseter.zipData(env);
 			return;
 		}
 
+		if(Asseter.__readFileList[env.hashedPath]){
+			Asseter.__readFileList[env.hashedPath].push(env);
+			return;
+		}
+		Asseter.__readFileList[env.hashedPath] = [env];
 		fs.readFile(env.fullPath,function(err,data){
-			if(err){Asseter.error(env,500);return;}
-			Cache[env.hashedPath] = {
-				eTag: env.eTag,
-				gziped: '',
-				deflated: '',
-				data: data
-			};
-			env.data = data;
-			env.httpHeader['Content-Type'] = env.contentType;
-			Asseter.zipData(env);
+			var envList = Asseter.__readFileList[env.hashedPath];
+			if(!envList)return;
+			if(err){
+				for(var i=0; i < envList.length; i++){
+					Asseter.error(envList[i],500);
+				}
+			}else{
+				var cacheEntry = cache.add(env.hashedPath);
+				cacheEntry.push({
+					eTag: env.eTag,
+					gziped: '',
+					deflated: '',
+					data: data
+				});
+				for(var i=0; i < envList.length; i++){
+					envList[i].data = data;
+					envList[i].httpHeader['Content-Type'] = envList[i].contentType;
+					Asseter.zipData(envList[i]);
+				}
+			}
+			delete Asseter.__readFileList[env.hashedPath];
+			return;
 		});
+		return;
 	},
 	/**
 	 * 压缩 file Buff
@@ -170,32 +193,33 @@ var Asseter = {
 		if(env.response.finished){Asseter.error(env,0);return;}
 		var acceptEncoding = env.request.headers['accept-encoding'];
 		if(config.clinetZipExt[env.ext] && acceptEncoding){
+			var hit = cache.get(env.hashedPath) ? cache.get(env.hashedPath)[0] : false;
 			if(acceptEncoding.match(/\bgzip\b/)){
-				if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].gziped){
+				if(hit && hit.gziped){
 					env.httpHeader['Content-Encoding'] = 'gzip';
 					env.statsCode = 200;
 					env.clinetCacheStat = 'ziped';
-					Asseter.responseEnd(env, Cache[env.hashedPath].gziped);
+					Asseter.responseEnd(env, hit.gziped);
 					return;
 				}
 				zlib.gzip(env.data, function(err, buf){
 					if(err){Asseter.error(env,500);return;}
-					Cache[env.hashedPath].gziped = buf;
+					hit.gziped = buf;
 					env.httpHeader['Content-Encoding'] = 'gzip';
 					env.statsCode = 200;
 					Asseter.responseEnd(env, buf);
 				});
 			}else if(acceptEncoding.match(/\bdeflate\b/)){
-				if(config.keepInMem && Cache[env.hashedPath] && Cache[env.hashedPath].deflated){
+				if(hit && hit.deflated){
 					env.httpHeader['Content-Encoding'] = 'deflated';
 					env.statsCode = 200;
 					env.clinetCacheStat = 'ziped';
-					Asseter.responseEnd(env, Cache[env.hashedPath].deflated);
+					Asseter.responseEnd(env, hit.deflated);
 					return;
 				}
 				zlib.deflate(env.data, function(err, buf){
 					if(err){Asseter.error(env,500);return;}
-					Cache[env.hashedPath].deflated = buf;
+					hit.deflated = buf;
 					env.httpHeader['Content-Encoding'] = 'deflate';
 					env.statsCode = 200;
 					Asseter.responseEnd(env, buf);
@@ -207,7 +231,8 @@ var Asseter = {
 			env.httpHeader['Content-Encoding'] = 'identity';
 			env.statsCode = 200;
 			Asseter.responseEnd(env, env.data);
-		}		
+		}
+		return;	
 	},
 	/**
 	 * 完成响应并关闭连接
@@ -223,6 +248,8 @@ var Asseter = {
 		env.contentLength = buf ? buf.length||0 : 0;
 		env.finishTime = (new Date()).valueOf();
 		config.log && Asseter.log(env);
+		delete env;
+		return;
 	},
 	/**
 	 * 返回错误并关闭连接
@@ -288,7 +315,8 @@ function app(request, response) {
 	env.ext = tmpExt ? tmpExt[1] : 'html';
 	env.contentType = config.MIME[env.ext];
 	if(!env.contentType){Asseter.error(env, 403);return;}
-	env.request.on('close',function(){
+	env.response.on('close',function(){
+		env.request && env.request.socket && env.request.socket.destory();
 		env.response.end();
 		delete env;
 	});
@@ -302,4 +330,4 @@ function app(request, response) {
 }
 http.createServer(app).listen(config.listen, function(){
 	console.log("Asset server(pid:" + process.pid + ") listening on " + config.listen);
-});
+}).setMaxListeners(0);

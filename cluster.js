@@ -2,7 +2,7 @@ var cluster = require('cluster');
 
 if (cluster.isMaster) {
 	var child_process = require('child_process'),
-		logger = child_process.fork(__dirname + '/logger.js'),
+		logger = child_process.fork(__dirname + '/lib/logger.js'),
 		waitingList = {};
 
 	function messageHandler(workerId, m) {
