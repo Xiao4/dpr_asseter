@@ -34,9 +34,9 @@ if (cluster.isMaster) {
 	}
 
 	//start up workers for each cpu
-	// require('os').cpus().forEach(function() {
+	require('os').cpus().forEach(function() {
 		cluster.fork();
-	// });
+	});
 	Object.keys(cluster.workers).forEach(function(id) {
 		cluster.workers[id].on('message', (function(id){
 					var workerId = id;
