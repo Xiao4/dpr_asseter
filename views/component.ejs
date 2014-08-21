@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app>
+<head>
+	<meta charset="utf-8">
+	<title><%= title %> - List</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/dpr/icons/AppIcon72x72.png">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/dpr/icons/AppIcon72x72@2x.png">
+	<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/dpr/icons/AppIcon76x76@2x.png">
+	<link rel="apple-touch-startup-image" href="/dpr/icons/iTunesArtwork@2x.png">
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" href="/dpr/mng/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/dpr/mng/css/mng.css">
+</head>
+
+	<div class="container">
+		<h1>Conponent List: </h1>
+		<ul>
+			<% for(var key in components){ if(components.hasOwnProperty(key)){ %>
+			<li>
+				<h3><%=key%> <small><a href="<%=component_path%>?<%=version%>,<%=key%>">script_link</a></small></h3>
+				<p><%-components[key].description%></p>
+				<pre class="pre-scrollable"><code><%=components[key].sample%></code></pre>
+			</li>
+			<% }};%>
+		</ul>
+
+	</div> <!-- /container -->
+
+	<script src="/dpr/mng/js/jquery.js"></script>
+	<script src="/dpr/mng/js/bootstrap.min.js"></script>
+</body>
+</html>

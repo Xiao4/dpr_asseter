@@ -1,0 +1,51 @@
+{
+	"base": {
+		"js": ["core/base/loader.js","core/plugin/pubsub/jquery.pubsub.js","core/base/eventrouter.js"],
+		"description": "loader, pubsub, eventrouter",
+		"sample":"..."
+	},
+	"creative": {
+		"js": ["creative/html_creative.js"],
+		"description":"创意预览, 见：<a href=\"http://domob-206.domob-inc.cn:14444/site/ilib?tpl=creative.htm&sort=components\">文档</a>",
+		"sample":""
+	},
+	"treeselect": {
+		"js": ["core/plugin/treeview/jquery.treeview.js", "core/plugin/treeselect/jquery.treeselect.js"],
+		"css": ["core/plugin/treeview/default/treeview.css", "core/plugin/treeselect/default/treeselect.css"],
+		"description":"TreeSelect树形选择组件",
+		"sample":"$(\"#my_hidden_input\").treeSelect();"
+	},
+	"autocomplete": {
+		"js": ["core/js/jquery/autocomplete/jquery.autocomplete.js"],
+		"css": ["core/js/jquery/autocomplete/default/autocomplete.css"],
+		"description":"a component",
+		"sample":""
+	},
+	"datepicker": {
+		"js": ["core/js/jquery/datepicker/jquery.datepicker.js"],
+		"css": ["core/js/jquery/datepicker/default/datepicker.css"],
+		"description":"a component",
+		"sample":""
+	},
+	"highcharts": {
+		"js": ["core/js/jquery/highcharts/highcharts.js"],
+		"description":"a component",
+		"sample":""
+	},
+	"progress": {
+		"js": ["core/js/jquery/progress/jquery.progress.js"],
+		"css": ["core/js/jquery/progress/default/progress.css"],
+		"description":"a component",
+		"sample":""
+	},
+	"customfileinput": {
+		"js": ["core/js/jquery/customfileinput/jquery.customfileinput.js"],
+		"description":"a component",
+		"sample":""
+	},
+	"fileupload": {
+		"js": ["core/js/jquery/customfileinput/jquery.customfileinput.js","/core/plugin/fileupload/jquery.ui.widget.js","/core/plugin/fileupload/jquery.fileupload.js"],
+		"description":"a component",
+		"sample":""
+	}
+}

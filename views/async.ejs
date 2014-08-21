@@ -1,0 +1,57 @@
+;
+(function(){
+	window.ENVOBJ = window.ENVOBJ || {
+		"domains":{
+			"here": location.host,
+			"asset":'<%=asset_server %>'
+		},
+		"guid": 0
+	};
+	var callback = "__waitToLoad_"+(window.ENVOBJ.guid++);
+	//ejs
+	(function(){
+		window[callback] = function(){
+		<% if (css && css.length) { %>
+			LOADCSS('<%=asset_server %><%=combo_path %>?<%=version %>,<%=css %>');
+		<% } %>
+		}
+	})();
+	//ejs end
+
+	if(typeof LOADJS == "undefined" && !window.__waitlist){
+		window.__waitlist = [];
+		if(typeof window[callback] == "function"){
+			window.__waitlist.push(window[callback]);
+		}
+
+		var head = document.getElementsByTagName("head")[0];
+		var script = document.createElement("script");
+		script.defer=true;
+		script.async=true;
+		// script.src = ENVOBJ.domains.asset+'/asset/combo?,/core/base/loader.js,core/plugin/pubsub/jquery.pubsub.js,core/base/eventrouter.js';
+		script.src = ENVOBJ.domains.asset+'/core/base/loader.js';
+		var done = false;
+		// Attach handlers for all browsers
+		script.onload = script.onreadystatechange = function(){
+			if ( !done && (!this.readyState ||
+					this.readyState == "loaded" || this.readyState == "complete") ) {
+				done = true;
+				(function(){
+					var i;
+					for (var i = 0; i < window.__waitlist.length; i++) {
+						if(typeof window.__waitlist[i] == "function"){
+							window.__waitlist[i]();
+						}
+					};
+				})();
+				script.onload = script.onreadystatechange = null;
+				head.removeChild( script );
+			}
+		};
+		head.appendChild(script);
+	}else{
+		if(typeof window[callback] == "function"){
+			window[callback]();
+		}
+	}
+})();
