@@ -1,13 +1,13 @@
 {
-	"keepInMem"	:false,
-	"listen"	:"80",
-	"filePath"	:"/root/resources",
-	"tmpPath"	:"/root/tmp/combo",
-	"comboPathName"	:"/combo/",
-	"strRegVersion": "\\?(\\d+),",
-	"compile"	:true,
+	"listen"	:"14445",
+	"serverUrl"	:"http://domob-206.domob-inc.cn:14445",
+	"filePath"	:"/home/liuwenbo/git/dpr_files",
+	"tmpPath"	:"/home/liuwenbo/tmp/combo",
+	"comboPathName"	:"/asset/combo",
+	"componentPathName"	:"/asset/component",
+	"strRegVersion": "\\?(\\d+),?",
+	"compile"	:false,
 	"log"		:true,
-	"logFile"	:"/root/logs/asseter_access.log",
 	"MIME" : {
 		"jpg":	"image/jpeg",
 		"gif":	"image/gif",
@@ -19,7 +19,8 @@
 		"js":	"text/javascript",
 		"html":	"text/html",
 		"htm":	"text/html",
-		"txt":	"text/plain"
+		"txt":	"text/plain",
+		"map":	"application/json"
 	},
 	"clinetZipExt" : {
 		"css":	true,

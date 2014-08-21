@@ -1,24 +1,25 @@
 {
-	"name": "asseter",
-	"version": "0.0.0",
-	"description": "asset server",
-	"homepage": "http://asseter.codeplex.com/",
-	"author": "Xiao4",
-	"main": "cluster.js",
-	"scripts": {
-		"start":"node ./cluster.js"
-	},
-	"repository": {
-		"type":"git",
-		"url":"https://git01.codeplex.com/asseter"
-	},
-	"license": [
-		{
-			"type": "Apache-2.0",
-			"url": "http://www.apache.org/licenses/LICENSE-2.0"
-		}
-	],
-  "devDependencies": {
-    "uglify-js": "2.2.5"
+  "name": "asseter",
+  "version": "0.1.0",
+  "description": "asset server",
+  "homepage": "http://asseter.codeplex.com/",
+  "author": "Xiao4",
+  "main": "cluster.js",
+  "scripts": {
+    "start": "node ./cluster.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git01.codeplex.com/asseter"
+  },
+  "license": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "dependencies": {
+    "ejs": "^1.0.0",
+    "uglify-js": "^2.4.15"
   }
 }

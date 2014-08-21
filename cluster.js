@@ -1,4 +1,5 @@
-var cluster = require('cluster');
+var cluster = require('cluster'),
+	config = require('./config.json');
 
 if (cluster.isMaster) {
 	var child_process = require('child_process'),
@@ -28,14 +29,14 @@ if (cluster.isMaster) {
 		}else if(m.name == "access_complete"){
 			// 日志
 			m.data.workerId = workerId;
-			logger.send(m);
+			config.log && logger.send(m);
 		}
 	}
 
 	//start up workers for each cpu
-	require('os').cpus().forEach(function() {
+	// require('os').cpus().forEach(function() {
 		cluster.fork();
-	});
+	// });
 	Object.keys(cluster.workers).forEach(function(id) {
 		cluster.workers[id].on('message', (function(id){
 					var workerId = id;
