@@ -283,7 +283,7 @@ var Asseter = {
 				}
 			}else{
 				var cacheEntry = cache.add(env.hashedPath);
-				cacheEntry.push({
+				!cacheEntry.length && cacheEntry.push({
 					eTag: env.eTag,
 					gzipped: '',
 					deflated: '',
