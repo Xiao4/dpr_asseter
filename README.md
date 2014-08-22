@@ -55,6 +55,12 @@ config.json
 	
 	// log accesses or not
 	"log"		:true,
+
+	// cache limit
+	"cacheLimit":300,
+
+	// maximum child worker count
+	"processerLimit":4,
 	
 	// mime types
 	"MIME" : {

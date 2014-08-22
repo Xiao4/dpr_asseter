@@ -8,6 +8,8 @@
 	"strRegVersion": "\\?(\\d+),?",
 	"compile"	:false,
 	"log"		:true,
+	"cacheLimit":300,
+	"processerLimit":4,
 	"MIME" : {
 		"jpg":	"image/jpeg",
 		"gif":	"image/gif",

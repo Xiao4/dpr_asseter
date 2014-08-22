@@ -25,6 +25,7 @@ if (cluster.isMaster) {
 			for(var i=0; i < workerList.length; i++){
 				cluster.workers[workerList[i]].send(m);
 			}
+			console.log('Process Complete Global WaitingList: ', workerList.length);
 			delete waitingList[m.data];
 		}else if(m.name == "access_complete"){
 			// 日志
@@ -34,8 +35,9 @@ if (cluster.isMaster) {
 	}
 
 	//start up workers for each cpu
+	var processerCount = 0;
 	require('os').cpus().forEach(function() {
-		cluster.fork();
+		if(processerCount++ < config.processerLimit)cluster.fork();
 	});
 	Object.keys(cluster.workers).forEach(function(id) {
 		cluster.workers[id].on('message', (function(id){

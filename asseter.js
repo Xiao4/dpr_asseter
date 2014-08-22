@@ -125,7 +125,7 @@ var Asseter = {
 					Asseter.clinetCacheControl(envList[i]);
 				}
 			}
-			delete Asseter.__staticStatList[env.hashedPath];
+			delete Asseter.__staticStatList[envList[0].hashedPath];
 		});
 	},
 	__getComboUrl : function(files) {
