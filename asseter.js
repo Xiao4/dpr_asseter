@@ -168,7 +168,6 @@ var Asseter = {
 				}
 			};
 		}else{
-			console.log('do list');
 			Asseter.__renderTpl(env, componentListTpl, {
 				"title": 'DPR Asseter', 
 				"component_path": config.componentPathName, 

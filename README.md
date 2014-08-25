@@ -16,8 +16,8 @@ Installation
 --------------
 
 ```sh
-git clone [git-repo-url] drp_asseter
-cd drp_asseter
+git clone [git-repo-url] dpr_asseter
+cd dpr_asseter
 npm install
 cp config.json.dist config.json
 vi config.json
@@ -29,16 +29,16 @@ config.json
 
 ```json
 {
-    // the port DRP Asseter focks on
+    // the port DPR Asseter focks on
 	"listen"	:"14445",
 	
-	// DRP Asseter url
+	// DPR Asseter url
 	"serverUrl"	:"http://domob-206.domob-inc.cn:14445",
 	
 	// where all the resource files are
 	"filePath"	:"/home/liuwenbo/git/dpr_files",
 	
-	// DRP Asseter will put temp files in it
+	// DPR Asseter will put temp files in it
 	"tmpPath"	:"/home/liuwenbo/tmp/combo",
 	
 	// combo url prefix
