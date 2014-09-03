@@ -1,5 +1,25 @@
 var cluster = require('cluster'),
-	config = require('./config.json');
+	path = require('path'),
+	config;
+
+var working_base = process.cwd();
+
+process.argv.forEach(function(val, index, array) {
+	if(val === "-d" && typeof process.argv[index+1] !== "undefined"){
+		working_base = process.argv[index+1];
+	}
+});
+
+//change cwd to working_base
+try {
+  process.chdir(working_base);
+  console.log('working in: ' + process.cwd());
+}
+catch (err) {
+  console.log('chdir: ' + err);
+}
+
+config = require(path.join(process.cwd(),'./config.json'));
 
 if (cluster.isMaster) {
 	var child_process = require('child_process'),

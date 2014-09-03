@@ -8,15 +8,15 @@
 # . /etc/rc.d/init.d/functions
 
 USER="web"
-
+PNAME="dpr_asseter"
 DAEMON="node"
 ROOT_DIR=`pwd`
 
-SERVER="$ROOT_DIR/cluster.js"
-LOG_FILE="$ROOT_DIR/logs/dpr.log"
+WORKING_BASE="/home/liuwenbo/work/$PNAME"
+LOG_FILE="$WORKING_BASE/logs/dpr.log"
+LOCK_FILE="$WORKING_BASE/$PNAME-lock"
 
-LOCK_FILE="$ROOT_DIR/dpr-asseter-lock"
-
+SERVER="$ROOT_DIR/cluster.js -d $WORKING_BASE"
 export NODE_ENV=production
 echo_success() {
   echo -n "["
@@ -41,23 +41,23 @@ echo_failure() {
 do_start()
 {
         if [ ! -f "$LOCK_FILE" ] ; then
-                echo -n $"Starting $SERVER: "
+                echo -n $"Starting $PNAME: $SERVER"
                 if [ ! -d "$LOG_FILE" ] ; then
                         touch $LOG_FILE
                 fi 
-                `$DAEMON $SERVER >> $LOG_FILE 2>&1 &` && echo_success || echo_failure
+                `nohup $DAEMON $SERVER >> $LOG_FILE 2>&1 &` && echo_success || echo_failure
                 # runuser -l "$USER" -c "$DAEMON $SERVER >> $LOG_FILE &" && echo_success || echo_failure
                 RETVAL=$?
                 echo
                 [ $RETVAL -eq 0 ] && touch $LOCK_FILE
         else
-                echo "$SERVER is locked."
+                echo "$PNAME is locked."
                 RETVAL=1
         fi
 }
 do_stop()
 {
-        echo -n $"Stopping $SERVER: "
+        echo -n $"Stopping $PNAME: "
         pid=`ps -aefw | grep "$DAEMON $SERVER" | grep -v " grep " | head -n 1 | awk '{print $2}'`
         kill -9 $pid > /dev/null 2>&1 && echo_success || echo_failure
         RETVAL=$?

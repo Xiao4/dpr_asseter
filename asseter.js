@@ -2,9 +2,7 @@
  * 
  */
 
-var config = require('./config.json'),
-	componentList = require('./components.json'),
-	http = require('http'),
+var http = require('http'),
 	url = require('url'),
 	path = require('path'),
 	fs = require('fs'),
@@ -15,6 +13,9 @@ var config = require('./config.json'),
 	child_process = require('child_process'),
 	compiler = child_process.fork(__dirname + '/lib/compiler.js'),
 	componentListTpl = fs.readFileSync(path.normalize(__dirname+'/views/component.ejs')).toString();
+
+var config = require(path.join(process.cwd(), './config.json')),
+	componentList = require(path.join(process.cwd(),'./components.json'));
 
 function __md5Hash(str) {
 	var hash = crypto.createHash('md5');
