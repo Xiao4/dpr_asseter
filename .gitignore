@@ -2,6 +2,7 @@ config.json
 dpr-asseter-lock
 *swp
 *.swp
+.sub*
 .gitCOMMIT_DEITMSG
 /node_modules/
 npm-debug.log

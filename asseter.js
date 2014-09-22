@@ -12,7 +12,9 @@ var http = require('http'),
 	Cache = require('./lib/cache'),
 	child_process = require('child_process'),
 	compiler = child_process.fork(__dirname + '/lib/compiler.js'),
-	componentListTpl = fs.readFileSync(path.normalize(__dirname+'/views/component.ejs')).toString();
+	pjson = require(__dirname+'/package.json'),
+	componentListTpl = fs.readFileSync(path.normalize(__dirname+'/views/component.ejs')).toString(),
+	indexTpl = fs.readFileSync(path.normalize(__dirname+'/views/index.ejs')).toString();
 
 var config = require(path.join(process.cwd(), './config.json')),
 	componentList = require(path.join(process.cwd(),'./components.json'));
@@ -107,6 +109,14 @@ var Asseter = {
 	__staticStatList:{},
 	handleStatic : function(env){
 		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.pathStr === "/"){
+			Asseter.__renderTpl(env, indexTpl, {
+				"title": 'DPR Asseter', 
+				"homepage": pjson.homepage,
+				"version": pjson.version
+			});
+			return;
+		}
 		env.fullPath = env.fullPath.replace(/[\?#].+$/, '');
 		if(Asseter.__staticStatList[env.hashedPath]){
 			Asseter.__staticStatList[env.hashedPath].push(env);
@@ -445,7 +455,11 @@ function app(request, response) {
 		}else if(env.urlObj.pathname == config.componentPathName){
 				Asseter.handleComponent(env);
 		}else{
-			env.fullPath = config.filePath + env.pathStr;
+			if(env.urlObj.pathname.match(/^\/dpr/)){
+				env.fullPath = __dirname + "/site" + env.pathStr;
+			}else{
+				env.fullPath = config.filePath + env.pathStr;
+			}
 			Asseter.handleStatic(env);
 		}
 	}catch(e){

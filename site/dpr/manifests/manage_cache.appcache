@@ -1,0 +1,15 @@
+CACHE MANIFEST
+
+# VERSION 2014.1.1.1
+
+CACHE:
+	/manage
+	/mng/css/bootstrap.min.css
+	/mng/css/signin.css
+	/mng/js/jquery.js
+	/mng/js/bootstrap.min.js
+	/mng/js/jquery-2.0.3.min.map
+	/mng/fonts/glyphicons-halflings-regular.woff
+NETWORK:
+	*
+FALLBACK:

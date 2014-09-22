@@ -19,17 +19,8 @@
 </head>
 
 	<div class="container">
-		<h1>Conponent List: </h1>
-		<ul>
-			<% for(var key in components){ if(components.hasOwnProperty(key)){ %>
-			<li>
-				<h3><%=key%> <small><a href="<%=component_path%>?<%=version%>,<%=key%>" target="_blank">script_link</a></small></h3>
-				<p><%-components[key].description%></p>
-				<pre class="pre-scrollable"><code><%=components[key].sample%></code></pre>
-			</li>
-			<% }};%>
-		</ul>
-
+		<h1>This's a resourse server </h1>
+		<p>powered by <a href="<%= homepage %>">DPR_Asseter</a> ver<%= version %></p>
 	</div> <!-- /container -->
 
 	<script src="/dpr/mng/js/jquery.js"></script>

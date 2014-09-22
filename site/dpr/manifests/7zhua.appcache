@@ -1,0 +1,15 @@
+CACHE MANIFEST
+
+# VERSION 2013.12.12.1
+
+CACHE:
+/icons/
+/js/
+/css/
+/img/
+
+NETWORK:
+/api/
+
+FALLBACK:
+/remote/ /local.htm
