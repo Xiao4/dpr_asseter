@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Dpr asseter by Xiao4</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Dpr asseter</h1>
+        <p>A resource server</p>
+
+        <p class="view"><a href="https://github.com/Xiao4/dpr_asseter">View the Project on GitHub <small>Xiao4/dpr_asseter</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/Xiao4/dpr_asseter/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Xiao4/dpr_asseter/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Xiao4/dpr_asseter">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="dpr-asster" class="anchor" href="#dpr-asster"><span class="octicon octicon-link"></span></a>DPR Asster</h1>
+
+<p>DPR Asster is a resource server</p>
+
+<ul>
+<li>try <a href="http://domob-206.domob-inc.cn:4444/asset/component?20">asset/component?20</a> </li>
+<li>try <a href="http://domob-206.domob-inc.cn:4444/asset/combo?1002,core/plugin/ajaxform/jquery.ajaxform.js,core/plugin/interactive/jquery.interactive.js,core/plugin/customradio/jquery.customradio.js,core/plugin/customselect/jquery.customselect.js,core/plugin/customfileinput/jquery.customfileinput.js,core/plugin/fileupload/jquery.ui.widget.js,core/plugin/fileupload/jquery.fileupload.js,core/plugin/datepicker/jquery.datepicker.js,core/plugin/treeview/jquery.treeview.js,core/plugin/treeselect/jquery.treeselect.js,adinfo/js/addstrategy.js">asset/combo?1002,core/plugin/ajaxf...e.js</a>
+</li>
+<li>or a magic</li>
+</ul><h2>
+<a name="version" class="anchor" href="#version"><span class="octicon octicon-link"></span></a>Version</h2>
+
+<p>0.1</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-sh"><pre>git clone <span class="o">[</span>git-repo-url<span class="o">]</span> dpr_asseter
+<span class="nb">cd </span>dpr_asseter
+npm install
+cp config.json.dist config.json
+vi config.json
+</pre></div>
+
+<h5>
+<a name="configure-" class="anchor" href="#configure-"><span class="octicon octicon-link"></span></a>Configure :</h5>
+
+<p>config.json</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="err">//</span> <span class="err">the</span> <span class="err">port</span> <span class="err">DPR</span> <span class="err">Asseter</span> <span class="err">focks</span> <span class="err">on</span>
+    <span class="nt">"listen"</span>    <span class="p">:</span><span class="s2">"14445"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">DPR</span> <span class="err">Asseter</span> <span class="err">url</span>
+    <span class="nt">"serverUrl"</span> <span class="p">:</span><span class="s2">"http://domob-206.domob-inc.cn:14445"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">where</span> <span class="err">all</span> <span class="err">the</span> <span class="err">resource</span> <span class="err">files</span> <span class="err">are</span>
+    <span class="nt">"filePath"</span>  <span class="p">:</span><span class="s2">"/home/liuwenbo/git/dpr_files"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">DPR</span> <span class="err">Asseter</span> <span class="err">will</span> <span class="err">put</span> <span class="err">temp</span> <span class="err">files</span> <span class="err">in</span> <span class="err">it</span>
+    <span class="nt">"tmpPath"</span>   <span class="p">:</span><span class="s2">"/home/liuwenbo/tmp/combo"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">combo</span> <span class="err">url</span> <span class="err">prefix</span>
+    <span class="nt">"comboPathName"</span> <span class="p">:</span><span class="s2">"/asset/combo"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">component</span> <span class="err">url</span> <span class="err">prefix</span>
+    <span class="nt">"componentPathName"</span> <span class="p">:</span><span class="s2">"/asset/component"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">how</span> <span class="err">to</span> <span class="err">get</span> <span class="err">the</span> <span class="err">version</span> <span class="err">string</span> <span class="err">in</span> <span class="err">a</span> <span class="err">url</span>
+    <span class="nt">"strRegVersion"</span><span class="p">:</span> <span class="s2">"\\?(\\d+),?"</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">compile</span> <span class="err">js</span> <span class="err">or</span> <span class="err">not</span>
+    <span class="nt">"compile"</span>   <span class="p">:</span><span class="kc">false</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">log</span> <span class="err">accesses</span> <span class="err">or</span> <span class="err">not</span>
+    <span class="nt">"log"</span>       <span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">cache</span> <span class="err">limit</span>
+    <span class="nt">"cacheLimit"</span><span class="p">:</span><span class="mi">300</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">maximum</span> <span class="err">child</span> <span class="err">worker</span> <span class="err">count</span>
+    <span class="nt">"processerLimit"</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+
+    <span class="err">//</span> <span class="err">mime</span> <span class="err">types</span>
+    <span class="nt">"MIME"</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"jpg"</span><span class="p">:</span>  <span class="s2">"image/jpeg"</span><span class="p">,</span>
+        <span class="nt">"gif"</span><span class="p">:</span>  <span class="s2">"image/gif"</span><span class="p">,</span>
+        <span class="nt">"png"</span><span class="p">:</span>  <span class="s2">"image/png"</span><span class="p">,</span>
+        <span class="nt">"ico"</span><span class="p">:</span>  <span class="s2">"image/x-icon"</span><span class="p">,</span>
+        <span class="nt">"icon"</span><span class="p">:</span> <span class="s2">"image/x-icon"</span><span class="p">,</span>
+        <span class="nt">"icns"</span><span class="p">:</span> <span class="s2">"image/x-icns"</span><span class="p">,</span>
+        <span class="nt">"css"</span><span class="p">:</span>  <span class="s2">"text/css"</span><span class="p">,</span>
+        <span class="nt">"js"</span><span class="p">:</span>   <span class="s2">"text/javascript"</span><span class="p">,</span>
+        <span class="nt">"html"</span><span class="p">:</span> <span class="s2">"text/html"</span><span class="p">,</span>
+        <span class="nt">"htm"</span><span class="p">:</span>  <span class="s2">"text/html"</span><span class="p">,</span>
+        <span class="nt">"txt"</span><span class="p">:</span>  <span class="s2">"text/plain"</span><span class="p">,</span>
+        <span class="nt">"map"</span><span class="p">:</span>  <span class="s2">"application/json"</span>
+    <span class="p">},</span>
+
+    <span class="err">//</span> <span class="err">compress</span> <span class="err">specific</span> <span class="err">kinds</span> <span class="err">of</span> <span class="err">files</span> <span class="err">or</span> <span class="err">not</span>
+    <span class="nt">"clinetZipExt"</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">"css"</span><span class="p">:</span>  <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">"js"</span><span class="p">:</span>   <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">"html"</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">"htm"</span><span class="p">:</span>  <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">"txt"</span><span class="p">:</span>  <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h5>
+<a name="run-" class="anchor" href="#run-"><span class="octicon octicon-link"></span></a>Run :</h5>
+
+<div class="highlight highlight-sh"><pre>. dpr.sh start
+</pre></div>
+
+<h2>
+<a name="tech" class="anchor" href="#tech"><span class="octicon octicon-link"></span></a>Tech</h2>
+
+<p>DPR Asster uses a number of open source projects to work properly:</p>
+
+<ul>
+<li>
+<a href="http://nodejs.org">Node.js</a> - making all this come possible</li>
+<li>
+<a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> - great UI boilerplate for modern web apps</li>
+</ul><p><strong>no zuo no die, memeda!</strong></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Xiao4">Xiao4</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
