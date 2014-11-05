@@ -54,6 +54,16 @@ if (cluster.isMaster) {
 			config.log && logger.send(m);
 		}
 	}
+	// process. .kill('SIGHUP')
+	process.on('exit', function(code) {
+		// console.log('exit asseter:'+code);
+		logger.kill('SIGSTOP');
+	});
+	process.on('SIGHUP', function(code) {
+		// console.log('exit asseter:'+code);
+		logger.kill('SIGKILL');
+		process.kill('SIGKILL');
+	});
 
 	//start up workers for each cpu
 	var processerCount = 0;
