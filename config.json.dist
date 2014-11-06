@@ -9,7 +9,7 @@
 	"compile":	false,
 	"log":true,
 	"logPath": "/logs/dpr.log",
-	"logCutInterval": 86400000,
+	"logCutInterval": 300000,
 	"cacheLimit":300,
 	"processerLimit":4,
 	"MIME" : {
