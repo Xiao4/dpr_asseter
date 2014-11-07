@@ -59,7 +59,7 @@ do_stop()
 {
         echo -n $"Stopping $PNAME: "
         pid=`ps -aefw | grep "$DAEMON $SERVER" | grep -v " grep " | head -n 1 | awk '{print $2}'`
-        kill -1 $pid > /dev/null 2>&1 && echo_success || echo_failure
+        kill -2 $pid > /dev/null 2>&1 && echo_success || echo_failure
         RETVAL=$?
         echo
         [ $RETVAL -eq 0 ] && rm -f $LOCK_FILE

@@ -56,11 +56,11 @@ if (cluster.isMaster) {
 	}
 	// process. .kill('SIGHUP')
 	process.on('exit', function(code) {
-		// console.log('exit asseter:'+code);
+		console.log('exit asseter:'+code);
 		logger.kill('SIGSTOP');
 	});
-	process.on('SIGHUP', function(code) {
-		// console.log('exit asseter:'+code);
+	process.on('SIGINT', function(code) {
+		console.log('exit asseter SIGINT:'+code);
 		logger.kill('SIGKILL');
 		process.kill('SIGKILL');
 	});
