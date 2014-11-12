@@ -1,8 +1,7 @@
 {
 	"listen":	"4444",
-	"serverUrl":"http://domob-206.domob-inc.cn:4444",
+	"serverUrl":"http://a.duomeng.cn",
 	"filePath":	"/home/web/work/dpr_files",
-	"tmpPath":	"/home/web/work/dpr_tmp",
 	"comboPathName":"/asset/combo",
 	"componentPathName":"/asset/component",
 	"strRegVersion":"\\?(\\d+),?",

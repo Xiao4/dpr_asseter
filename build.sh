@@ -1,16 +1,18 @@
 #!/bin/bash
 
 PNAME=dpr_asseter
-VERSION=0.1.0
+VERSION=0.1.1
 SKIP=$@
 
 SCRATCH_DIR=$PNAME-$VERSION
 
 rm -f target/${SCRATCH_DIR}-*.rpm 2>/dev/null
 mkdir target/$SCRATCH_DIR
-cp -r ./*.j* dpr.sh lib node_modules views target/$SCRATCH_DIR
+cp -r ./*.j* dpr.sh lib node_modules views site target/$SCRATCH_DIR
 cd target/$SCRATCH_DIR
-rm -rf logs config.jso*
+rm -rf logs config.json dpr.sh
+cp ../../dpr.sh.dist dpr.sh
+cp ../../config.json.dist config.json
 # mkdir logs
 # touch logs/dpr.log
 # cp config.json.dist config.json

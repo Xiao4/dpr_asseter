@@ -10,9 +10,9 @@
 USER="web"
 PNAME="dpr_asseter"
 DAEMON="node"
-ROOT_DIR=`pwd`
+ROOT_DIR="$HOME/prog.d/$PNAME"
 
-WORKING_BASE="/home/liuwenbo/work/$PNAME"
+WORKING_BASE="$HOME/work/$PNAME"
 LOG_FILE="$WORKING_BASE/logs/dpr.log"
 LOCK_FILE="$WORKING_BASE/$PNAME-lock"
 

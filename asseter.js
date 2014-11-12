@@ -19,6 +19,7 @@ var http = require('http'),
 var config = require(path.join(process.cwd(), './config.json')),
 	componentList = require(path.join(process.cwd(),'./components.json'));
 
+config.tmpPath = path.join(process.cwd(), './tmp');
 function __md5Hash(str) {
 	var hash = crypto.createHash('md5');
 	return hash.update(str).digest('hex');

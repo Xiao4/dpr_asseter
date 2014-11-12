@@ -20,6 +20,7 @@ catch (err) {
 }
 
 config = require(path.join(process.cwd(),'./config.json'));
+config.tmpPath = path.join(process.cwd(), './tmp');
 
 if (cluster.isMaster) {
 	var child_process = require('child_process'),
