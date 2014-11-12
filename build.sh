@@ -14,7 +14,7 @@ rm -rf logs config.jso* components.jso*
 # mkdir logs
 # touch logs/dpr.log
 # cp config.json.dist config.json
-# sed -i -e "s/__BUILD_VERSION__/$VERSION/"
+sed -i -e "s/__BUILD_VERSION__/$VERSION/"
 
 cd ../
 fpm -s dir -t rpm -n $PNAME -v $VERSION --rpm-defattrfile=0775 --prefix=/usr/local/domob/prog.d $SCRATCH_DIR
