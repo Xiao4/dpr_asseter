@@ -10,9 +10,7 @@ rm -f target/${SCRATCH_DIR}-*.rpm 2>/dev/null
 mkdir target/$SCRATCH_DIR
 cp -r ./*.j* dpr.sh lib node_modules views site target/$SCRATCH_DIR
 cd target/$SCRATCH_DIR
-rm -rf logs config.json dpr.sh
-cp ../../dpr.sh.dist dpr.sh
-cp ../../config.json.dist config.json
+rm -rf logs config.jso* dpr.s* components.jso*
 # mkdir logs
 # touch logs/dpr.log
 # cp config.json.dist config.json
