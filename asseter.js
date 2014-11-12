@@ -16,8 +16,8 @@ var http = require('http'),
 	componentListTpl = fs.readFileSync(path.normalize(__dirname+'/views/component.ejs')).toString(),
 	indexTpl = fs.readFileSync(path.normalize(__dirname+'/views/index.ejs')).toString();
 
-var config = require(path.join(process.cwd(), './config.json')),
-	componentList = require(path.join(process.cwd(),'./components.json'));
+var config = require(path.join(process.cwd(), './conf/config.json')),
+	componentList = require(path.join(process.cwd(),'./conf/components.json'));
 
 config.tmpPath = path.join(process.cwd(), './tmp');
 function __md5Hash(str) {

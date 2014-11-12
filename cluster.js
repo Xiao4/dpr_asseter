@@ -19,7 +19,7 @@ catch (err) {
   console.log('chdir: ' + err);
 }
 
-config = require(path.join(process.cwd(),'./config.json'));
+config = require(path.join(process.cwd(),'./conf/config.json'));
 config.tmpPath = path.join(process.cwd(), './tmp');
 
 if (cluster.isMaster) {
