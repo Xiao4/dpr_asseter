@@ -25,7 +25,6 @@ config.tmpPath = path.join(process.cwd(), './tmp');
 if (cluster.isMaster) {
 	var child_process = require('child_process'),
 		logger = child_process.fork(__dirname + '/lib/logger.js'),
-		Monitor = require('monitor').start();
 		waitingList = {};
 
 	function messageHandler(workerId, m) {
