@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PNAME=dpr_asseter
-VERSION=0.1.4
+VERSION=0.1.5
 
 rm -rf target
 mkdir target
