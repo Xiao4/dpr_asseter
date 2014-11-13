@@ -132,9 +132,15 @@ var Asseter = {
 					Asseter.error(envList[i],404);
 				}
 			}else{
-				for(var i=0; i < envList.length; i++){
-					envList[i].stats = stats;
-					Asseter.clinetCacheControl(envList[i]);
+				if(stats.isDirectory()){
+					for(var i=0; i < envList.length; i++){
+						Asseter.error(envList[i], 403);
+					}
+				}else{
+					for(var i=0; i < envList.length; i++){
+						envList[i].stats = stats;
+						Asseter.clinetCacheControl(envList[i]);
+					}
 				}
 			}
 			delete Asseter.__staticStatList[envList[0].hashedPath];
