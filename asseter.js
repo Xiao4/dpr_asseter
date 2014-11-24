@@ -51,6 +51,7 @@ compiler.on('message',function(m){
 
 var cache = new Cache(config.cacheLimit),
 	REG_EXT = /\.(\w+)([\?\#].*)?$/,
+	REG_EXTRA = /[\?\#].*$/,
 	REG_VERSION = new RegExp(config.strRegVersion)
 	;
 var Asseter = {
@@ -457,6 +458,7 @@ function app(request, response) {
 	});
 	env.hashedPath = __md5Hash(env.pathStr);
 	try{
+		env.pathStr = env.pathStr.replace(REG_EXTRA, '');
 		if(env.urlObj.pathname == config.comboPathName){
 				Asseter.handleCombo(env);
 		}else if(env.urlObj.pathname == config.componentPathName){
