@@ -458,12 +458,12 @@ function app(request, response) {
 	});
 	env.hashedPath = __md5Hash(env.pathStr);
 	try{
-		env.pathStr = env.pathStr.replace(REG_EXTRA, '');
 		if(env.urlObj.pathname == config.comboPathName){
 				Asseter.handleCombo(env);
 		}else if(env.urlObj.pathname == config.componentPathName){
 				Asseter.handleComponent(env);
 		}else{
+			env.pathStr = env.pathStr.replace(REG_EXTRA, '');
 			if(env.urlObj.pathname.match(/^\/dpr/)){
 				env.fullPath = __dirname + "/site" + env.pathStr;
 			}else{
