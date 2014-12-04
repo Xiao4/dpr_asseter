@@ -417,13 +417,17 @@ var Asseter = {
 		env.statsCode = statsCode;
 		Asseter.responseEnd(env, txt);
 	},
+	__getRemoteIp : function (env){
+		var req = env.request;
+		return req.headers['x-forwarded-for'] || req.headers['x-cluster-client-ip'] || req.headers['x-real-ip'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress
+	},
 	/**
 	 * 发送记录log请求
 	 * @param  {Env} env 环境对象
 	 */
 	log : function(env){
 		process.send({name:'access_complete', data:{
-			remoteAddress: env.request.connection.remoteAddress,
+			remoteAddress: Asseter.__getRemoteIp(env),
 			startTime: env.startTime,
 			tookTime: env.tookTime,
 			contentLength: env.contentLength,
