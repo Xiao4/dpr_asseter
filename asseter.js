@@ -419,7 +419,7 @@ var Asseter = {
 	},
 	__getRemoteIp : function (env){
 		var req = env.request;
-		return req.headers['x-forwarded-for'] || req.headers['x-cluster-client-ip'] || req.headers['x-real-ip'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress
+		return req.headers['x-forwarded-for'] || req.headers['x-cluster-client-ip'] || req.headers['x-real-ip'] || req.connection.remoteAddress || req.socket.remoteAddress
 	},
 	/**
 	 * 发送记录log请求
