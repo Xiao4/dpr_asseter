@@ -373,17 +373,18 @@ var Asseter = {
 	 * @param  {Buff} buf file Buff
 	 */
 	responseEnd : function(env, buf){
-		if(env.response.finished){env.statsCode = 0;}
-		if(env.statsCode){
+		env.remoteAddress = Asseter.__getRemoteIp(env);
+		if(env.response.finished){
+			env.statsCode = 0;
+		}else{
 			env.response.writeHeader(env.statsCode, env.httpHeader);
 			env.response.end(buf||undefined);
 		}
-		!env.response.finished && env.response.end();
 		env.contentLength = buf ? buf.length||0 : 0;
 		var diff = process.hrtime(env.startHrTime);
 		env.tookTime = diff[0] * 1e9 + diff[1];
 		delete env.startHrTime;
-		config.log && Asseter.log(env);
+		Asseter.log(env);
 		delete env;
 		return;
 	},
@@ -426,18 +427,20 @@ var Asseter = {
 	 * @param  {Env} env 环境对象
 	 */
 	log : function(env){
-		process.send({name:'access_complete', data:{
-			remoteAddress: Asseter.__getRemoteIp(env),
-			startTime: env.startTime,
-			tookTime: env.tookTime,
-			contentLength: env.contentLength,
-			statsCode: env.statsCode,
-			url: env.request.url,
-			method: env.request.method,
-			headers: env.request.headers,
-			httpVersion: env.request.httpVersion,
-			clinetCacheStat: env.clinetCacheStat
-		}});
+		if(config.log){
+			process.send({name:'access_complete', data:{
+				remoteAddress: env.remoteAddress,
+				startTime: env.startTime,
+				tookTime: env.tookTime,
+				contentLength: env.contentLength,
+				statsCode: env.statsCode,
+				url: env.request.url,
+				method: env.request.method,
+				headers: env.request.headers,
+				httpVersion: env.request.httpVersion,
+				clinetCacheStat: env.clinetCacheStat
+			}});
+		}
 	}
 };
 

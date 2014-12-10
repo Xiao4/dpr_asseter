@@ -46,7 +46,7 @@ if (cluster.isMaster) {
 			for(var i=0; i < workerList.length; i++){
 				cluster.workers[workerList[i]].send(m);
 			}
-			console.log('Process Complete Global WaitingList: ',m.data, ' worker count: ', workerList.length);
+			// console.log('Process Complete Global WaitingList: ',m.data, ' worker count: ', workerList.length);
 			delete waitingList[m.data];
 		}else if(m.name == "access_complete"){
 			// 日志
