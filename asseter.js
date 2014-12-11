@@ -303,8 +303,8 @@ var Asseter = {
 				var cacheEntry = cache.add(env.hashedPath);
 				!cacheEntry.length && cacheEntry.push({
 					eTag: env.eTag,
-					gzipped: '',
-					deflated: '',
+					gzip: '',
+					deflate: '',
 					data: data
 				});
 				for(var i=0; i < envList.length; i++){
@@ -328,37 +328,31 @@ var Asseter = {
 		if(config.clinetZipExt[env.ext] && acceptEncoding){
 			var hit = cache.get(env.hashedPath) ? cache.get(env.hashedPath)[0] : false;
 			if(acceptEncoding.match(/\bgzip\b/)){
-				if(hit && hit.gzipped){
-					env.httpHeader['Content-Encoding'] = 'gzip';
-					env.statsCode = 200;
+				if(hit && hit.gzip){
 					env.clinetCacheStat = 'zipped';
-					Asseter.responseEnd(env, hit.gzipped);
+					Asseter.flushZiped(env, 'gzip', hit.gzip);
 					return;
 				}
 				zlib.gzip(env.data, function(err, buf){
 					if(err){Asseter.error(env,500);return;}
-					hit.gzipped = buf;
-					env.httpHeader['Content-Encoding'] = 'gzip';
-					env.statsCode = 200;
-					Asseter.responseEnd(env, buf);
+					hit.gzip = buf;
+					Asseter.flushZiped(env, 'gzip', buf);
 				});
 			}else if(acceptEncoding.match(/\bdeflate\b/)){
-				if(hit && hit.deflated){
-					env.httpHeader['Content-Encoding'] = 'deflated';
-					env.statsCode = 200;
+				if(hit && hit.deflate){
 					env.clinetCacheStat = 'zipped';
-					Asseter.responseEnd(env, hit.deflated);
+					Asseter.flushZiped(env, 'deflate', hit.deflate);
 					return;
 				}
 				zlib.deflate(env.data, function(err, buf){
 					if(err){Asseter.error(env,500);return;}
-					hit.deflated = buf;
-					env.httpHeader['Content-Encoding'] = 'deflate';
-					env.statsCode = 200;
-					Asseter.responseEnd(env, buf);
+					hit.deflate = buf;
+					Asseter.flushZiped(env, 'deflate', buf);
 				});
 			}else{
-				Asseter.error(env,406);
+				env.httpHeader['Content-Encoding'] = 'identity';
+				env.statsCode = 200;
+				Asseter.responseEnd(env, env.data);
 			}
 		}else{
 			env.httpHeader['Content-Encoding'] = 'identity';
@@ -366,6 +360,11 @@ var Asseter = {
 			Asseter.responseEnd(env, env.data);
 		}
 		return;	
+	},
+	flushZiped: function(env, type, buf){
+		env.httpHeader['Content-Encoding'] = type;
+		env.statsCode = 200;
+		Asseter.responseEnd(env, buf);
 	},
 	/**
 	 * 完成响应并关闭连接
