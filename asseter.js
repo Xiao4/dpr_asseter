@@ -61,7 +61,7 @@ var Asseter = {
 	 */
 	__comboStatList:{},
 	handleCombo : function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		var tmpVersion = REG_VERSION.exec(env.pathStr),
 			version = tmpVersion? tmpVersion[1]:0,
 			versionDir = config.tmpPath + '/' + version
@@ -110,7 +110,7 @@ var Asseter = {
 	 */
 	__staticStatList:{},
 	handleStatic : function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		if(env.pathStr === "/"){
 			Asseter.__renderTpl(env, indexTpl, {
 				"title": 'DPR Asseter', 
@@ -163,7 +163,7 @@ var Asseter = {
 	}, 
 	__componentStatList:{},
 	handleComponent: function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		var tmpVersion = REG_VERSION.exec(env.pathStr),
 			version = tmpVersion? tmpVersion[1]:0,
 			versionDir = config.tmpPath + '/' + version,
@@ -256,7 +256,7 @@ var Asseter = {
 	 * @param  {Env} env 环境对象
 	 */
 	clinetCacheControl : function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		var eTag = env.stats.ino.toString(16)+ "-" + env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
 		
 		if(env.request.headers['if-none-match'] && eTag == env.request.headers['if-none-match']){
@@ -276,7 +276,7 @@ var Asseter = {
 	 */
 	__readFileList:{},
 	readFile: function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		var hit = cache.get(env.hashedPath) ? cache.get(env.hashedPath)[0] : false;
 		if( hit && hit.eTag == env.eTag){
 			env.data = hit.data;
@@ -323,7 +323,7 @@ var Asseter = {
 	 * @param  {Env} env 环境对象
 	 */
 	zipData: function(env){
-		if(env.response.finished){Asseter.error(env,0);return;}
+		if(env.response.finished){Asseter.error(env, 499);return;}
 		var acceptEncoding = env.request.headers['accept-encoding'];
 		if(config.clinetZipExt[env.ext] && acceptEncoding){
 			var hit = cache.get(env.hashedPath) ? cache.get(env.hashedPath)[0] : false;
@@ -372,9 +372,8 @@ var Asseter = {
 	 * @param  {Buff} buf file Buff
 	 */
 	responseEnd : function(env, buf){
-		env.remoteAddress = Asseter.__getRemoteIp(env);
 		if(env.response.finished){
-			env.statsCode = 0;
+			env.statsCode = 499;
 		}else{
 			env.response.writeHeader(env.statsCode, env.httpHeader);
 			env.response.end(buf||undefined);
@@ -407,6 +406,9 @@ var Asseter = {
 				break;
 			case 416:
 				txt = '<h3>416: Requested Range Not Satisfiable</h3>';
+				break;
+			case 499:
+				txt = '<h3>499: Client Closed Request</h3>';
 				break;
 			case 500:
 				txt = '<h3>500: Internal Server Error</h3>';
@@ -453,6 +455,7 @@ function app(request, response) {
 	env.pathStr = path.normalize(env.urlObj.path);
 	env.startTime = (new Date).valueOf();
 	env.startHrTime = process.hrtime();
+	env.remoteAddress = Asseter.__getRemoteIp(env);
 	var tmpExt = REG_EXT.exec(env.pathStr);
 	env.ext = tmpExt ? tmpExt[1] : 'html';
 	env.contentType = config.MIME[env.ext];
