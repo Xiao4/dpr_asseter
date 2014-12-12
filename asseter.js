@@ -112,11 +112,7 @@ var Asseter = {
 	handleStatic : function(env){
 		if(env.response.finished){Asseter.error(env, 499);return;}
 		if(env.pathStr === "/"){
-			Asseter.__renderTpl(env, indexTpl, {
-				"title": 'DPR Asseter', 
-				"homepage": pjson.homepage,
-				"version": pjson.version
-			});
+			Asseter.__renderPage(env, 'index', {"version": pjson.version});
 			return;
 		}
 		env.fullPath = env.fullPath.replace(/[\?#].+$/, '');
@@ -187,12 +183,7 @@ var Asseter = {
 				}
 			};
 		}else{
-			Asseter.__renderTpl(env, componentListTpl, {
-				"title": 'DPR Asseter', 
-				"component_path": config.componentPathName, 
-				"components": Asseter.__getComponentList(),
-				"version": version||'0'
-			});
+			Asseter.__renderPage(env, 'componentList', {"version": version});
 			return;
 		}
 		if(resourceObj.css.length+resourceObj.js.length == 0){
@@ -247,8 +238,38 @@ var Asseter = {
 	 * @param  {String} tpl Ejs模板
 	 * @param  {Object} options 模板参数
 	 */
-	__renderTpl : function(env, tpl, options){
-		env.data = ejs.render(tpl, options);
+	__renderPage : function(env, pageName, options){
+		env.eTag = __md5Hash(env.hashedPath+JSON.stringify(options));
+		if(env.request.headers['if-none-match'] && env.eTag == env.request.headers['if-none-match'].replace(/-\w+$/g, "")){
+			env.statsCode = 304;
+			Asseter.responseEnd(env);
+			return;
+		}
+		var page;
+		if(pageName == "componentList"){
+			page = {
+				"tpl": componentListTpl,
+				"options": {
+					"title": 'DPR Asseter', 
+					"component_path": config.componentPathName, 
+					"components": Asseter.__getComponentList(),
+					"version": options.version||'0'
+				}
+			}
+		}else if(pageName == "index"){
+			page = {
+				"tpl": indexTpl,
+				"options": {
+					"title": 'DPR Asseter', 
+					"homepage": pjson.homepage,
+					"version": options.version||'0'
+				}
+			}
+		}else{
+			Asseter.error(env, 404);
+			return;
+		}
+		env.data = ejs.render(page.tpl, page.options);
 		Asseter.zipData(env);
 	},
 	/**
@@ -257,14 +278,14 @@ var Asseter = {
 	 */
 	clinetCacheControl : function(env){
 		if(env.response.finished){Asseter.error(env, 499);return;}
-		var eTag = env.stats.ino.toString(16)+ "-" + env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
-		
-		if(env.request.headers['if-none-match'] && eTag == env.request.headers['if-none-match']){
+		//env.stats.ino.toString(16)+ "-" +
+		var eTag = env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
+
+		if(env.request.headers['if-none-match'] && eTag == env.request.headers['if-none-match'].replace(/-\w+$/g, "")){
 			env.statsCode = 304;
 			Asseter.responseEnd(env);
 			return;
 		}
-		env.httpHeader['ETag'] = eTag;
  	    env.httpHeader['Cache-Control'] = 'public, max-age=31536000';
 		env.eTag = eTag;
 		Asseter.readFile(env);
@@ -350,11 +371,13 @@ var Asseter = {
 					Asseter.flushZiped(env, 'deflate', buf);
 				});
 			}else{
+				env.httpHeader['ETag'] = env.eTag+'-chunked';
 				env.httpHeader['Content-Encoding'] = 'identity';
 				env.statsCode = 200;
 				Asseter.responseEnd(env, env.data);
 			}
 		}else{
+			env.httpHeader['ETag'] = env.eTag+'-chunked';
 			env.httpHeader['Content-Encoding'] = 'identity';
 			env.statsCode = 200;
 			Asseter.responseEnd(env, env.data);
@@ -362,6 +385,7 @@ var Asseter = {
 		return;	
 	},
 	flushZiped: function(env, type, buf){
+		env.httpHeader['ETag'] = env.eTag+'-'+type;
 		env.httpHeader['Content-Encoding'] = type;
 		env.statsCode = 200;
 		Asseter.responseEnd(env, buf);
@@ -375,6 +399,9 @@ var Asseter = {
 		if(env.response.finished){
 			env.statsCode = 499;
 		}else{
+			if(env.statsCode == 200){
+				env.httpHeader['Vary'] = 'If-None-Match';
+			}
 			env.response.writeHeader(env.statsCode, env.httpHeader);
 			env.response.end(buf||undefined);
 		}
@@ -421,7 +448,7 @@ var Asseter = {
 	},
 	__getRemoteIp : function (env){
 		var req = env.request;
-		return req.headers['x-forwarded-for'] || req.headers['x-cluster-client-ip'] || req.headers['x-real-ip'] || req.connection.remoteAddress || req.socket.remoteAddress
+		return req.headers['x-forwarded-for'] || req.headers['x-cluster-client-ip'] || req.headers['x-real-ip'] || req.headers['real-ip'] || req.connection.remoteAddress || req.socket.remoteAddress
 	},
 	/**
 	 * 发送记录log请求
