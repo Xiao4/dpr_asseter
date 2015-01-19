@@ -139,10 +139,10 @@ var Asseter = {
 			return Asseter.__syncStreams(env, files);
 		}
 
-		fs.createReadStream(file).on('data', function(chunk){
-			env.response.write(chunk);
-		}).on('end', function(){
-			Asseter.__syncStreams(env, files)
+		var rs = fs.createReadStream(file);
+		rs.pipe(env.response, {"end": false});
+		rs.on("end", function(){
+			Asseter.__syncStreams(env, files);
 		});
 	},
 	/**
@@ -532,7 +532,7 @@ function app(request, response) {
 	env.contentType = config.MIME[env.ext];
 	if(!env.contentType){Asseter.error(env, 403);return;}
 	env.response.on('close',function(){
-		env.request && env.request.socket && env.request.socket.destory && env.request.socket.destory();
+		// env.request && env.request.socket && env.request.socket.destory && env.request.socket.destory();
 		env.response.end();
 		delete env;
 	});

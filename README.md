@@ -27,7 +27,7 @@ vi config.json
 
 config.json
 
-```json
+```js
 {
     // the port DPR Asseter focks on
 	"listen"	:"14445",
