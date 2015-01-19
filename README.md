@@ -10,7 +10,7 @@ DPR Asster is a resource server
 Version
 ----
 
-0.1
+0.1.15
 
 Installation
 --------------
@@ -55,6 +55,9 @@ config.json
 	
 	// log accesses or not
 	"log"		:true,
+	
+	// develop mod or not
+	"dev"		:false,
 
 	// cache limit
 	"cacheLimit":300,
