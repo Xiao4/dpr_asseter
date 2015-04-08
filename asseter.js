@@ -17,7 +17,17 @@ var http = require('http'),
 	indexTpl = fs.readFileSync(path.normalize(__dirname+'/views/index.ejs')).toString();
 
 var config = require(path.join(process.cwd(), './conf/config.json')),
+	fileEnvironment,componentList;
+
+if(fs.existsSync(path.join(config.filePath, './environment.json'))){
+	fileEnvironment = require(path.join(config.filePath, './environment.json'));
+	componentList = fileEnvironment.components;
+}else{
+	fileEnvironment = {
+		"version": '0'
+	};
 	componentList = require(path.join(process.cwd(),'./conf/components.json'));
+}
 
 config.tmpPath = path.join(process.cwd(), './tmp');
 function __md5Hash(str) {
@@ -186,6 +196,14 @@ var Asseter = {
 			delete Asseter.__staticStatList[envList[0].hashedPath];
 		});
 	},
+	handleVersion : function(env){
+		if(fs.existsSync(path.join(config.filePath, './environment.json'))){
+			fileEnvironment = JSON.parse(fs.readFileSync(path.join(config.filePath, './environment.json')));
+		}
+		env.statsCode = 200;
+		env.httpHeader['Cache-Control'] = 'no-cache';
+		Asseter.responseEnd(env, new Buffer(fileEnvironment.version));
+	},
 	__getComboUrl : function(files) {
 		var baseURL = config.serverUrl || '/';
 		return (files&&files.length)?baseURL + path.normalize(comboPathName+"?"+this.getVersion()+','+files.join(',')) : '';
@@ -282,6 +300,8 @@ var Asseter = {
 	 * @param  {Object} options 模板参数
 	 */
 	__renderPage : function(env, pageName, options){
+		env.contentType = config.MIME['html'];
+
 		env.eTag = __md5Hash(env.hashedPath+JSON.stringify(options));
 		if(env.request.headers['if-none-match'] && env.eTag == env.request.headers['if-none-match'].replace(/-\w+$/g, "")){
 			env.statsCode = 304;
@@ -528,7 +548,7 @@ function app(request, response) {
 	env.startHrTime = process.hrtime();
 	env.remoteAddress = Asseter.__getRemoteIp(env);
 	var tmpExt = REG_EXT.exec(env.pathStr);
-	env.ext = tmpExt ? tmpExt[1] : 'html';
+	env.ext = tmpExt ? tmpExt[1] : 'txt';
 	env.contentType = config.MIME[env.ext];
 	if(!env.contentType){Asseter.error(env, 403);return;}
 	env.response.on('close',function(){
@@ -542,6 +562,8 @@ function app(request, response) {
 				Asseter.handleCombo(env);
 		}else if(env.urlObj.pathname == config.componentPathName){
 				Asseter.handleComponent(env);
+		}else if(env.urlObj.pathname == "/version"){
+				Asseter.handleVersion(env);
 		}else{
 			env.pathStr = env.pathStr.replace(REG_EXTRA, '');
 			if(env.urlObj.pathname.match(/^\/dpr/)){
