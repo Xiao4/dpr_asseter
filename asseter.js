@@ -3,6 +3,7 @@
  */
 
 var http = require('http'),
+	https = require('https'),
 	url = require('url'),
 	path = require('path'),
 	fs = require('fs'),
@@ -205,8 +206,7 @@ var Asseter = {
 		Asseter.responseEnd(env, new Buffer(fileEnvironment.version));
 	},
 	__getComboUrl : function(files) {
-		var baseURL = config.serverUrl || '/';
-		return (files&&files.length)?baseURL + path.normalize(comboPathName+"?"+this.getVersion()+','+files.join(',')) : '';
+		return (files&&files.length)?'/' + path.normalize(comboPathName+"?"+this.getVersion()+','+files.join(',')) : '';
 	},
 	__getComponent : function(componentName) {
 		if(typeof componentList[componentName] != "undefined"){
@@ -226,6 +226,7 @@ var Asseter = {
 			versionDir = config.tmpPath + '/' + version,
 			components = env.pathStr.replace(/^[^,]+,?/gi, "").split(','),
 			resourceObj = {
+				server: env.urlObj.protocol + '://' + env.urlObj.host, 
 				css: [],
 				js:[]
 			},
@@ -530,7 +531,8 @@ var Asseter = {
 				method: env.request.method,
 				headers: env.request.headers,
 				httpVersion: env.request.httpVersion,
-				clinetCacheStat: env.clinetCacheStat
+				clinetCacheStat: env.clinetCacheStat,
+				protocol: env.urlObj.protocol
 			}});
 		}
 	}
@@ -550,6 +552,9 @@ function app(request, response) {
 	var tmpExt = REG_EXT.exec(env.pathStr);
 	env.ext = tmpExt ? tmpExt[1] : 'txt';
 	env.contentType = config.MIME[env.ext];
+	env.urlObj.protocol = request.connection.encrypted ? "https":"http";
+	env.urlObj.host = request.headers.host;
+
 	if(!env.contentType){Asseter.error(env, 403);return;}
 	env.response.on('close',function(){
 		// env.request && env.request.socket && env.request.socket.destory && env.request.socket.destory();
@@ -580,3 +585,14 @@ function app(request, response) {
 http.createServer(app).listen(config.listen, function(){
 	console.info("Asset server(pid:" + process.pid + ") listening on " + config.listen + " at " + (new Date).toString());
 }).setMaxListeners(0);
+
+//https server
+if(config.sslOptions && config.sslOptions.server === "on"){
+	var sslCertificate = {
+		key: fs.readFileSync(config.sslOptions.keyPath),
+		cert: fs.readFileSync(config.sslOptions.certPath)
+	}
+	https.createServer(sslCertificate, app).listen(config.sslOptions.listen, function(){
+		console.info("SSL server listening on " + config.sslOptions.listen + " at " + (new Date).toString());
+	}).setMaxListeners(0);
+}

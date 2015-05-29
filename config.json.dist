@@ -1,6 +1,11 @@
 {
 	"listen":	"4444",
-	"serverUrl":"http://a.duomeng.cn",
+	"sslOptions":{
+		"server" : "off",
+		"listen" : "4445",
+		"keyPath": "ca.key",
+		"certPath": "ca.crt"
+	},
 	"filePath":	"/home/web/work/dpr_files",
 	"comboPathName":"/asset/combo",
 	"componentPathName":"/asset/component",

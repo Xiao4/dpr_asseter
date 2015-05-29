@@ -32,14 +32,11 @@ config.json
     // the port DPR Asseter focks on
 	"listen"	:"14445",
 	
-	// DPR Asseter url
-	"serverUrl"	:"http://domob-206.domob-inc.cn:14445",
-	
 	// where all the resource files are
-	"filePath"	:"/home/liuwenbo/git/dpr_files",
+	"filePath"	:"/home/xiao4/git/dpr_files",
 	
 	// DPR Asseter will put temp files in it
-	"tmpPath"	:"/home/liuwenbo/tmp/combo",
+	"tmpPath"	:"/home/xiao4/tmp/combo",
 	
 	// combo url prefix
 	"comboPathName"	:"/asset/combo",
@@ -107,7 +104,7 @@ DPR Asster uses a number of open source projects to work properly:
 * [Node.js] - making all this come possible
 * [Twitter Bootstrap] - great UI boilerplate for modern web apps
 
-**no zuo no die, memeda!**
+**memeda!**
 
 [asset/component?20]:http://domob-206.domob-inc.cn:4444/asset/component?20
 [asset/combo?1002,core/plugin/ajaxf...e.js]:http://domob-206.domob-inc.cn:4444/asset/combo?1002,core/plugin/ajaxform/jquery.ajaxform.js,core/plugin/interactive/jquery.interactive.js,core/plugin/customradio/jquery.customradio.js,core/plugin/customselect/jquery.customselect.js,core/plugin/customfileinput/jquery.customfileinput.js,core/plugin/fileupload/jquery.ui.widget.js,core/plugin/fileupload/jquery.fileupload.js,core/plugin/datepicker/jquery.datepicker.js,core/plugin/treeview/jquery.treeview.js,core/plugin/treeselect/jquery.treeselect.js,adinfo/js/addstrategy.js
