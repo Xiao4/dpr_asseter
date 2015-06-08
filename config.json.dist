@@ -1,10 +1,10 @@
 {
 	"listen":	"4444",
 	"sslOptions":{
-		"server" : "off",
-		"listen" : "4445",
-		"keyPath": "ca.key",
-		"certPath": "ca.crt"
+		"server" : "on",
+		"listen" : "2443",
+		"keyPath": ""/home/web/work/dpr_asseter/config/ssl/ca.key",
+		"certPath": "/home/web/work/dpr_asseter/config/ssl/ca.crt"
 	},
 	"filePath":	"/home/web/work/dpr_files",
 	"comboPathName":"/asset/combo",
