@@ -6,6 +6,10 @@
 		"keyPath": ""/home/web/work/dpr_asseter/config/ssl/ca.key",
 		"certPath": "/home/web/work/dpr_asseter/config/ssl/ca.crt"
 	},
+	"monitorOptions":{
+		"server": "on",
+		"listen": "14500"
+	},
 	"filePath":	"/home/web/work/dpr_files",
 	"comboPathName":"/asset/combo",
 	"componentPathName":"/asset/component",
