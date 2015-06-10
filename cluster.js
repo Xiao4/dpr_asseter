@@ -55,14 +55,18 @@ if (cluster.isMaster) {
 		}
 	}
 	// process. .kill('SIGHUP')
-	process.on('exit', function(code) {
+	process.on('exit', function exit(code) {
 		console.log('exit asseter:'+code);
-		logger.kill('SIGSTOP');
+		try{
+			logger.kill();
+		}catch(e){ console.log(e); }
 	});
-	process.on('SIGINT', function(code) {
+	process.on('SIGINT', function exitSIGINT(code) {
 		console.log('exit asseter SIGINT:'+code);
-		logger.kill('SIGKILL');
-		process.kill('SIGKILL');
+		try{
+			logger.kill();
+			process.exit();
+		}catch(e){ console.log(e); }
 	});
 
 	//start up workers for each cpu
@@ -79,6 +83,12 @@ if (cluster.isMaster) {
 				})(id));
 	});
 
+
+	//monitor
+	if(config.monitorOptions && config.monitorOptions.server === "on") {
+		var monitor=require('./lib/monitor');
+		monitor.init(process, config.monitorOptions);
+	}
 } else {
 	//load up asseter as a worker
 	require('./asseter.js');
