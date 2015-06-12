@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PNAME=dpr_asseter
-VERSION=0.3.1
+VERSION=0.4.1
 
 REPO_VERSION=`yum list $PNAME | grep $PNAME | awk '{print $2}' | awk -F ":|-" '{print $2}'`
 
