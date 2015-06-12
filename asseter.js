@@ -3,7 +3,7 @@
  */
 
 var http = require('http'),
-	https = require('https'),
+	spdy = require('spdy'),
 	url = require('url'),
 	path = require('path'),
 	fs = require('fs'),
@@ -588,11 +588,12 @@ http.createServer(app).listen(config.listen, function(){
 
 //https server
 if(config.sslOptions && config.sslOptions.server === "on"){
-	var sslCertificate = {
+	var sslOptions = {
 		key: fs.readFileSync(config.sslOptions.keyPath),
-		cert: fs.readFileSync(config.sslOptions.certPath)
+		cert: fs.readFileSync(config.sslOptions.certPath),
+		ca: fs.readFileSync(config.sslOptions.caPath)
 	}
-	https.createServer(sslCertificate, app).listen(config.sslOptions.listen, function(){
+	spdy.createServer(sslOptions, app).listen(config.sslOptions.listen, function(){
 		console.info("SSL server listening on " + config.sslOptions.listen + " at " + (new Date).toString());
 	}).setMaxListeners(0);
 }
