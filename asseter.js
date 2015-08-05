@@ -562,6 +562,7 @@ function app(request, response) {
 		delete env;
 	});
 	env.hashedPath = __md5Hash(env.pathStr);
+	env.httpHeader['Access-Control-Allow-Origin'] = '*';
 	try{
 		if(env.urlObj.pathname == config.comboPathName){
 				Asseter.handleCombo(env);
