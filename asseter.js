@@ -126,7 +126,8 @@ var Asseter = {
 	handleAsyncCombo: function(env){
 		var pathList = env.pathStr.replace(/^[^,]+,?/gi, "").split(',');
 
-		env.response.setHeader('Content-Type', env.contentType);
+		env.httpHeader['Content-Type']=env.contentType;
+		env.response.writeHeader(200, env.httpHeader);
 
 		Asseter.__syncStreams(env, pathList);
 	},
