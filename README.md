@@ -10,15 +10,15 @@ DPR Asster is a resource server
 Version
 ----
 
-0.1.15
+0.4.2
 
 Installation
 --------------
 
-```sh
+```
 git clone [git-repo-url] dpr_asseter
 cd dpr_asseter
-npm install
+npm rebuild
 cp config.json.dist config.json
 vi config.json
 ```
@@ -27,11 +27,31 @@ vi config.json
 
 config.json
 
-```js
+```
 {
     // the port DPR Asseter focks on
 	"listen"	:"14445",
-	
+
+	//ssl options
+	"sslOptions":{
+		// https On/Off
+		"server" : "on",
+
+		// https focks
+		"listen" : "14446", 
+
+		// ssl certs
+		"keyPath": "/home/xiao4/work/dpr_asseter/conf/ssl/key.pem",
+		"certPath": "/home/xiao4/work/dpr_asseter/conf/ssl/cert.pem",
+		"caPath": "/home/xiao4/work/dpr_asseter/conf/ssl/ca.pem"
+	},
+
+	//dm303 Monitor setting, trun off if u don't has one.
+	"monitorOptions":{
+		"server": "on",
+		"listen": "14500"
+	},
+
 	// where all the resource files are
 	"filePath"	:"/home/xiao4/git/dpr_files",
 	
@@ -45,16 +65,13 @@ config.json
 	"componentPathName"	:"/asset/component",
 	
 	// how to get the version string in a url
-	"strRegVersion": "\\?(\\d+),?",
+	"strRegVersion":"\\?(\\w+),?",
 	
-	// compile js or not
-	"compile"	:false,
+	// use this server for develop or not
+	"dev"	:false,
 	
 	// log accesses or not
 	"log"		:true,
-	
-	// develop mod or not
-	"dev"		:false,
 
 	// cache limit
 	"cacheLimit":300,
@@ -70,28 +87,40 @@ config.json
 		"ico":	"image/x-icon",
 		"icon":	"image/x-icon",
 		"icns":	"image/x-icns",
+		"eot":	"application/vnd.ms-fontobject",
+		"otf":	"application/font-sfnt",
+		"ttf":	"application/font-sfnt",
+		"woff":	"application/font-woff",
+		"svg":	"image/svg+xml",
+		"svgz":	"image/svg+xml",
 		"css":	"text/css",
 		"js":	"text/javascript",
 		"html":	"text/html",
 		"htm":	"text/html",
 		"txt":	"text/plain",
-		"map":	"application/json"
+		"map":	"application/json",
+		"mobileconfig":	"application/mobileconfig"
 	},
-	
+
 	// compress specific kinds of files or not
 	"clinetZipExt" : {
 		"css":	true,
 		"js":	true,
 		"html":	true,
 		"htm":	true,
-		"txt":	true
+		"txt":	true,
+		"eot":	true,
+		"otf":	true,
+		"ttf":	true,
+		"svg":	true,
+		"svgz":	true
 	}
 }
 ```
 
 ##### Run :
 
-```sh
+```
 . dpr.sh start
 ```
 

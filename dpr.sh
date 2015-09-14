@@ -55,6 +55,24 @@ do_start()
                 RETVAL=1
         fi
 }
+do_dev()
+{
+        if [ ! -f "$LOCK_FILE" ] ; then
+                echo -n $"Starting $PNAME: $SERVER"
+                if [ ! -d "$LOG_FILE" ] ; then
+                        touch $LOG_FILE
+                fi 
+                `$DAEMON $SERVER >> $LOG_FILE 2>&1 &` && echo_success || echo_failure
+                # runuser -l "$USER" -c "$DAEMON $SERVER >> $LOG_FILE &" && echo_success || echo_failure
+                # RETVAL=$?
+                echo
+                #[ $RETVAL -eq 0 ] && 
+                touch $LOCK_FILE
+        else
+                echo "$PNAME is locked."
+                RETVAL=1
+        fi
+}
 do_stop()
 {
         echo -n $"Stopping $PNAME: "
@@ -69,6 +87,9 @@ case "$1" in
         start)
                 do_start
                 ;;
+        dev)
+                do_dev
+                ;;
         stop)
                 do_stop
                 ;;
@@ -78,7 +99,7 @@ case "$1" in
                 do_start
                 ;;
         *)
-                echo "Usage: $0 {start|stop|restart}"
+                echo "Usage: $0 {start|dev|stop|restart}"
                 RETVAL=1
 esac
 
