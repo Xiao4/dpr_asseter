@@ -10,7 +10,7 @@ DPR Asster is a resource server
 Version
 ----
 
-0.4.2
+1.0.0 use node 4.*
 
 Installation
 --------------
