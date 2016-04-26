@@ -127,8 +127,9 @@ var Asseter = {
 		var pathList = env.pathStr.replace(/^[^,]+,?/gi, "").split(',');
 
 		env.httpHeader['Content-Type']=env.contentType;
+		env.httpHeader['Access-Control-Allow-Origin'] = '*';
 		env.response.writeHeader(200, env.httpHeader);
-
+		
 		Asseter.__syncStreams(env, pathList);
 	},
 	__syncStreams: function (env, files){
@@ -347,6 +348,7 @@ var Asseter = {
 		var eTag = env.stats.size.toString(16) + "-" + env.stats.mtime.valueOf().toString(16) ;
 
 		if(env.request.headers['if-none-match'] && eTag == env.request.headers['if-none-match'].replace(/-\w+$/g, "")){
+ 	    	env.httpHeader['ETag'] = env.request.headers['if-none-match'];
 			env.statsCode = 304;
 			Asseter.responseEnd(env);
 			return;
@@ -466,7 +468,10 @@ var Asseter = {
 			env.statsCode = 499;
 		}else{
 			if(env.statsCode == 200){
-				env.httpHeader['Vary'] = 'If-None-Match';
+				// env.httpHeader['Vary'] = 'Accept-Encoding';
+				// env.httpHeader['Vary'] = 'ETag';
+				// env.httpHeader['Vary'] = 'If-None-Match';
+				env.httpHeader['Access-Control-Allow-Origin'] = '*';
 			}
 			env.response.writeHeader(env.statsCode, env.httpHeader);
 			env.response.end(buf||undefined);
@@ -563,7 +568,6 @@ function app(request, response) {
 		delete env;
 	});
 	env.hashedPath = __md5Hash(env.pathStr);
-	env.httpHeader['Access-Control-Allow-Origin'] = '*';
 	try{
 		if(env.urlObj.pathname == config.comboPathName){
 				Asseter.handleCombo(env);
