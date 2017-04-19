@@ -596,12 +596,8 @@ http.createServer(app).listen(config.listen, function(){
 if(config.sslOptions && config.sslOptions.server === "on"){
 	var sslOptions = {
 		key: fs.readFileSync(config.sslOptions.keyPath),
-		cert: fs.readFileSync(config.sslOptions.certPath),
-		ca: fs.readFileSync(config.sslOptions.caPath),
-		spdy: {
-			protocols: [ 'h2', 'spdy/3.1', 'http/1.1']
-		}
-	}
+		cert: fs.readFileSync(config.sslOptions.certPath)
+	};
 	spdy.createServer(sslOptions, app).listen(config.sslOptions.listen, function(){
 		console.info("SSL server listening on " + config.sslOptions.listen + " at " + (new Date).toString());
 	}).setMaxListeners(0);
