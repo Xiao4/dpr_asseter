@@ -577,7 +577,7 @@ function app(request, response) {
 				Asseter.handleVersion(env);
 		}else{
 			env.pathStr = env.pathStr.replace(REG_EXTRA, '');
-			if(env.urlObj.pathname.match(/^\/dpr/)){
+			if(env.urlObj.pathname.match(/^\/dpr\//)){
 				env.fullPath = __dirname + "/site" + env.pathStr;
 			}else{
 				env.fullPath = config.filePath + env.pathStr;
