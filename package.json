@@ -19,9 +19,9 @@
     }
   ],
   "dependencies": {
-    "ejs": "*",
+    "ejs": "^2.5.7",
     "ps-tree": "*",
-    "spdy": "*",
+    "spdy": "^3.4.7",
     "thrift": "*",
     "usage": "*"
   }
