@@ -23,6 +23,7 @@ config = require(path.join(process.cwd(),'./conf/config.json'));
 config.tmpPath = path.join(process.cwd(), './tmp');
 
 if (cluster.isMaster) {
+	config.dev && console.log('prepare master');
 	var child_process = require('child_process'),
 		logger = child_process.fork(__dirname + '/lib/logger.js'),
 		waitingList = {};
@@ -40,6 +41,7 @@ if (cluster.isMaster) {
 			waitingList[m.data.hashedPath] = [workerId];
 			cluster.workers[workerId].send(m);
 		}else if(m.name == "compile_complete"){
+			config.dev && console.log('compile_complete', m.data)
 			// 压缩完成轮询等待队列，发送压缩完成通知
 			var workerList = waitingList[m.data];
 			if(!workerList)return;
@@ -49,6 +51,7 @@ if (cluster.isMaster) {
 			// console.log('Process Complete Global WaitingList: ',m.data, ' worker count: ', workerList.length);
 			delete waitingList[m.data];
 		}else if(m.name == "access_complete"){
+			config.dev && console.log('access_complete', m.data)
 			// 日志
 			m.data.workerId = workerId;
 			config.log && logger.send(m);
@@ -86,10 +89,12 @@ if (cluster.isMaster) {
 
 	//monitor
 	if(config.monitorOptions && config.monitorOptions.server === "on") {
+		config.dev && console.log('prepare monitor');
 		var monitor=require('./lib/monitor');
 		monitor.init(process, config.monitorOptions);
 	}
 } else {
 	//load up asseter as a worker
+	config.dev && console.log('prepare worker');
 	require('./asseter.js');
 }
